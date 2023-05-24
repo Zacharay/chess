@@ -1,0 +1,40 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+body{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap:20px;
+    height:100vh;
+    background-color:#495057;
+}
+.grid{
+    display:grid;
+    grid-template-columns: repeat(8,1fr);
+    grid-template-rows: repeat(8,1fr);
+    width:800px;
+    height:800px;
+}
+.tile-white{
+    background-color: #F0D9B5;
+}
+.tile-black{
+    background-color: #B58863;
+}
+.piece{
+    width:100px;
+    height:100px;
+}
+.fen-div{
+    display:flex;
+    gap:32px;
+    width:800px;
+}
+.fen-input{
+    width:100%;
+    font-size:20px;
+}
