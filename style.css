@@ -28,6 +28,7 @@ body{
 .piece{
     width:100px;
     height:100px;
+    cursor: pointer;
 }
 .fen-div{
     display:flex;
