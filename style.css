@@ -29,6 +29,8 @@ body{
     width:100px;
     height:100px;
     cursor: pointer;
+    position: absolute;
+    z-index: 2;
 }
 .fen-div{
     display:flex;
@@ -38,4 +40,30 @@ body{
 .fen-input{
     width:100%;
     font-size:20px;
+}
+.available-move{
+    position: relative;
+}
+.available-move::after{
+    content: '';
+    position: absolute;
+    top:0;
+    left:0;
+    background-color: #fa5252c0;
+    width: 100%;
+    height:100%;
+    z-index: 21;
+}
+.active-square{
+    position: relative;
+}
+.active-square::after{
+    content: '';
+    position: absolute;
+    top:0;
+    left:0;
+    background-color: #ff922b;
+    width:100%;
+    height:100%;
+    z-index: 1;
 }

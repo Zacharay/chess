@@ -21,6 +21,7 @@ export class Knight extends Piece{
     generateMoves(board)
     {
         const pos120 = SQ64TO120[this.pos];
+        this.moveList=[];
         this.#offsets.forEach((offset)=>{
             const newPos = pos120+offset;
             if(SQ120TO64[newPos]==-1)return;
@@ -35,7 +36,7 @@ export class Knight extends Piece{
             }
 
         })
-        console.log(this.moveList);
+        return this.moveList;
     }
 }
 export class Rock extends Piece{

@@ -3,8 +3,8 @@ import { SQ120TO64,SQ64TO120 } from "./helpers.js";
 class Board{
     #board = Array(64).fill('')
     #board120 = Array(120).fill(-1);
-    #turn;
     #castlePerm;
+    #turn;
     constructor(fenNotation = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     {
         this._fenToBoard(fenNotation)
@@ -64,24 +64,7 @@ class Board{
         }
 
     }
-    
-    getBoard()
-    {
-        return this.#board;
-    }
-}
-
-class Main{
-    #board
-    constructor()
-    {
-        const boardObj = new Board();
-        this.#board = boardObj.getBoard();
-        
-        this._renderBoard(this.#board);
-
-    }
-    _renderBoard(board)
+    renderBoard()
     {
         const grid = document.querySelector(".grid");
         let html = '';
@@ -92,21 +75,40 @@ class Main{
                 const boardIdx = rank*8+file
                 let isEmpty;
                 let piece;
-                if(board[boardIdx].symbol)
+                if(this.#board[boardIdx].symbol)
                 {
-                    piece = board[boardIdx].symbol;
+                    piece = this.#board[boardIdx].symbol;
                     isEmpty = false;
                 }
                 else{
                     isEmpty =true;
                 }
                 const tileType = (file+rank)%2==0?'white':'black';
-                html+=`<div class='tile-${tileType}'>
+                html+=`<div class='tile tile-${tileType}'>
                 ${!isEmpty?`<img src='piecesImg/${piece}.png' class='piece' data-pos='${boardIdx}'/>`:''}
                 </div>`
             }
         }
         grid.innerHTML = html;
+        
+    }
+    getBoard()
+    {
+        return this.#board;
+    }
+}
+
+class GameState{
+    #board
+    #tiles;
+    #turn=1;//1-white  0-black
+    constructor()
+    {
+        const boardObj = new Board();
+        this.#board = boardObj.getBoard();
+        
+        boardObj.renderBoard();
+        this.#tiles = document.querySelectorAll(".tile");
         const pieces = document.querySelectorAll('.piece');
         pieces.forEach((piece,idx)=>{
             piece.ondragstart = ()=>{
@@ -115,12 +117,30 @@ class Main{
             const piecePos = piece.getAttribute('data-pos');
             
             piece.addEventListener('click',()=>{
-                console.log(piecePos);
-                this.#board[piecePos].generateMoves(board);
+                this.handleMove(piecePos);
             })
         })
-        
-        
     }
+    handleMove(piecePos)
+    {
+        if(this.#board[piecePos].isWhite!=this.#turn)return;
+
+        const moves = this.#board[piecePos].generateMoves(this.#board);
+        this.#tiles[piecePos].classList.add('active-square');
+        this.renderMoves(moves);
+
+        this.#turn=!this.#turn;
+
+
+    }
+    renderMoves(moves)
+    {
+        const tiles = document.querySelectorAll(".tile");
+
+        
+        moves.forEach((move)=>{
+            tiles[move].classList.add('available-move');
+        })
+    }    
 }
-const app = new Main();
+const app = new GameState();
