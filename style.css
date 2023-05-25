@@ -47,6 +47,7 @@ body{
 .available-move::after{
     content: '';
     position: absolute;
+    cursor:pointer;
     top:0;
     left:0;
     background-color: #fa5252c0;
@@ -60,6 +61,7 @@ body{
 .active-square::after{
     content: '';
     position: absolute;
+
     top:0;
     left:0;
     background-color: #ff922b;
