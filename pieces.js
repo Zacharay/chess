@@ -86,13 +86,51 @@ export class King extends Piece{
 }
 export class Pawn extends Piece{
 
+    #baseMove = -10;
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='P';
     }
     generateMoves(board)
     {
+        this.moveList=[];
+        const pos120 = SQ64TO120[this.pos];
+        const color = this.isWhite?1:-1;
 
+        const oneSquareMove = SQ120TO64[pos120+this.#baseMove*color];
+        
+        if(oneSquareMove!=-1&&board[oneSquareMove]=='')
+        {
+            this.moveList.push(oneSquareMove);
+
+            const twoSquareMove  = SQ120TO64[pos120+(this.#baseMove*2)*color];
+            if(this.isOnStart(pos120))
+            {
+                this.moveList.push(twoSquareMove);
+            }
+        }
+        
+        
+        const leftDiagonalMove= SQ120TO64[pos120+(this.#baseMove-1)*color];
+        if(leftDiagonalMove!=-1&&board[leftDiagonalMove]!=''&&board[leftDiagonalMove].isWhite!=this.isWhite)
+        {
+            this.moveList.push(leftDiagonalMove);
+        }
+        const rightDiagonalMove = SQ120TO64[pos120+(this.#baseMove+1)*color];
+        if(rightDiagonalMove!=-1&&board[rightDiagonalMove]!=''&&board[rightDiagonalMove].isWhite!=this.isWhite)
+        {
+            this.moveList.push(rightDiagonalMove);
+        }
+        return this.moveList;
+    }
+    isOnStart(pos)
+    {
+        pos = Math.floor(pos/10);
+        if((pos==3&&!this.isWhite)||(pos==8&&this.isWhite))
+        {
+            return true;
+        }
+        else return false;
     }
 }
 

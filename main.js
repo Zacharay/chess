@@ -84,7 +84,6 @@ class Board{
 }
 
 class GameState{
-    #tiles;
     #turn=1;//1-white  0-black
     #activePiece;
     #boardObj
@@ -125,10 +124,9 @@ class GameState{
             }
         }
         grid.innerHTML = html;
-        this.#tiles = document.querySelectorAll(".tile");
-        this.piecesClicks();
+        this.addPiecesListeners();
     }
-    piecesClicks()
+    addPiecesListeners()
     {
         const pieces = document.querySelectorAll('.piece');
         pieces.forEach((piece,idx)=>{
@@ -143,38 +141,39 @@ class GameState{
     }
     selectPiece(piecePos)
     {
-        console.log(this.#boardObj.getBoard());
+        console.log(this.#boardObj.getBoard())
+        const tiles = document.querySelectorAll(".tile");
         const resetActiveTiles = (()=>{
             document.querySelector('.active-square')?.classList.remove("active-square");
-            this.#tiles.forEach((tile)=>{
+            tiles.forEach((tile)=>{
                 if(!tile.classList.contains('available-move'))return;
-
-                tile.removeEventListener('click',)
-                tile.classList.remove('available-move');
+                    
+                    tile.classList.remove('available-move');
+                    tile.replaceWith(tile.cloneNode(true));
             })
         })
+
         const selectedPiece = this.#boardObj.getPieceByPos(piecePos);
         if(selectedPiece.isWhite!=this.#turn)return;
 
         resetActiveTiles();
         const moves = this.#boardObj.getPieceMoves(piecePos);
-        console.log(piecePos)
-        this.#tiles[piecePos].classList.add('active-square');
+        tiles[piecePos].classList.add('active-square');
         this.#activePiece = selectedPiece;
         this.renderMoves(moves);
-        //this.piecesClicks();
         
-        const x =document.querySelectorAll(".available-move").forEach((sq)=>{
+        document.querySelectorAll(".available-move").forEach((sq)=>{
            const to= sq.getAttribute('data-pos')/1;
-            sq.addEventListener('click',handler =()=>{
-                this.makeMove(to)
+            sq.addEventListener('click',()=>{
+                this.movePiece(to)
             })
         })
-        console.log(x);
+       
 
     }
-    makeMove(to)
+    movePiece(to)
     {
+        console.log('movepiece')
         this.#turn = !this.#turn;
         this.#boardObj.setNewPosition(this.#activePiece.pos,to);
         this.renderBoard();
@@ -182,8 +181,6 @@ class GameState{
     renderMoves(moves)
     {
         const tiles = document.querySelectorAll(".tile");
-
-       
         moves.forEach((move)=>{
             tiles[move].classList.add('available-move');
         })
