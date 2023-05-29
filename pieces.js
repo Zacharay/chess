@@ -42,46 +42,97 @@ export class Knight extends Piece{
 }
 export class Rock extends Piece{
 
+    #offsets = [10,-10,1,-1];
     constructor(white,pos) {
         super(white,pos);
         this.symbol+='R';
     }
     generateMoves(board)
     {
+        this.moveList=[];
+        this.#offsets.forEach(offset=>{
+            let newPos120 = SQ64TO120[this.pos] + offset;
+            while(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
+            {
+                this.moveList.push(SQ120TO64[newPos120]);
 
+                //break loop after finding first opponent piece 
+                if(board[SQ120TO64[newPos120]]!='')break;
+
+                newPos120+=offset;
+            }
+        })
+        return this.moveList;
     }
 }
 export class Bishop extends Piece{
 
+    #offsets =[11,-11,9,-9];
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='B';
     }
     generateMoves(board)
     {
+        this.moveList=[];
+        this.#offsets.forEach(offset=>{
+            let newPos120 = SQ64TO120[this.pos] + offset;
+            while(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
+            {
+                this.moveList.push(SQ120TO64[newPos120]);
+                
+                //break loop after finding first opponent piece 
+                if(board[SQ120TO64[newPos120]]!='')break;
 
+                newPos120+=offset;
+            }
+        })
+        return this.moveList;
     }
 }
 export  class Queen extends Piece{
 
+    #offsets = [11,-11,9,-9,10,-10,1,-1]
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='Q';
     }
     generateMoves(board)
     {
+        this.moveList=[];
+        this.#offsets.forEach(offset=>{
+            let newPos120 = SQ64TO120[this.pos] + offset;
+            while(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
+            {
+                this.moveList.push(SQ120TO64[newPos120]);
 
+                //break loop after finding first opponent piece 
+                if(board[SQ120TO64[newPos120]]!='')break;
+
+                newPos120+=offset;
+            }
+        })
+        return this.moveList;
     }
 }
 export class King extends Piece{
 
+    #offsets = [10,-10,11,-11,9,-9,1,-1];
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='K';
     }
     generateMoves(board)
     {
-
+        this.moveList=[];
+        this.#offsets.forEach(offset=>{
+            let newPos120 = SQ64TO120[this.pos] + offset;
+            if(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
+            {
+                this.moveList.push(SQ120TO64[newPos120]);
+            }
+        })
+        return this.moveList;
     }
 }
 export class Pawn extends Piece{
@@ -104,7 +155,7 @@ export class Pawn extends Piece{
             this.moveList.push(oneSquareMove);
 
             const twoSquareMove  = SQ120TO64[pos120+(this.#baseMove*2)*color];
-            if(this.isOnStart(pos120))
+            if(this.isOnStart(pos120)&&board[twoSquareMove]=='')
             {
                 this.moveList.push(twoSquareMove);
             }

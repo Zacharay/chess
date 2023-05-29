@@ -1,10 +1,7 @@
 import { Bishop, King, Knight, Pawn, Queen ,Rock} from "./pieces.js";
 import { SQ120TO64,SQ64TO120 } from "./helpers.js";
 class Board{
-    #board = Array(64).fill('')
-    #board120 = Array(120).fill(-1);
-    #castlePerm;
-    #turn;
+    #board = Array(64).fill('');
     constructor(fenNotation = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     {
         this._fenToBoard(fenNotation)
@@ -28,8 +25,7 @@ class Board{
                 curSq++;
             }
         }  
-        this.#turn = parts[1];
-        this.#castlePerm= parts[2];
+
 
     }
     _getPieceBySymbol(symbol,pos)
@@ -64,6 +60,14 @@ class Board{
     }
     setNewPosition(from,to)
     {
+        if(this.#board[to]!=''){
+            const audio = new Audio('sounds/capture.mp3');
+            audio.play();
+        }
+        else{
+            const audio = new Audio('sounds/move-self.mp3');
+            audio.play();
+        }
         this.#board[from].pos = to;
 
         this.#board[to]=this.#board[from];
@@ -173,7 +177,6 @@ class GameState{
     }
     movePiece(to)
     {
-        console.log('movepiece')
         this.#turn = !this.#turn;
         this.#boardObj.setNewPosition(this.#activePiece.pos,to);
         this.renderBoard();
