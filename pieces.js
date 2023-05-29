@@ -25,17 +25,13 @@ export class Knight extends Piece{
         this.moveList=[];
         this.#offsets.forEach((offset)=>{
             const newPos = pos120+offset;
-            if(SQ120TO64[newPos]==-1)return;
-
             const newPos64 = SQ120TO64[newPos];
-            if(board[newPos64]=='') {
-                this.moveList.push(newPos64);
-            }
-            else if(board[newPos64].isWhite!=this.isWhite)
-            {
-                this.moveList.push(newPos64);
-            }
+            if(SQ120TO64[newPos]==-1||board[newPos64].isWhite==this.isWhite)return;
 
+            const move = {from:this.pos,to:newPos64}
+        
+            this.moveList.push(move);
+           
         })
         return this.moveList;
     }
@@ -54,7 +50,9 @@ export class Rock extends Piece{
             let newPos120 = SQ64TO120[this.pos] + offset;
             while(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
             {
-                this.moveList.push(SQ120TO64[newPos120]);
+                const move = {from:this.pos,to:SQ120TO64[newPos120]}
+
+                this.moveList.push(move);
 
                 //break loop after finding first opponent piece 
                 if(board[SQ120TO64[newPos120]]!='')break;
@@ -79,7 +77,9 @@ export class Bishop extends Piece{
             let newPos120 = SQ64TO120[this.pos] + offset;
             while(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
             {
-                this.moveList.push(SQ120TO64[newPos120]);
+                const move = {from:this.pos,to:SQ120TO64[newPos120]}
+
+                this.moveList.push(move);
                 
                 //break loop after finding first opponent piece 
                 if(board[SQ120TO64[newPos120]]!='')break;
@@ -104,7 +104,9 @@ export  class Queen extends Piece{
             let newPos120 = SQ64TO120[this.pos] + offset;
             while(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
             {
-                this.moveList.push(SQ120TO64[newPos120]);
+                const move = {from:this.pos,to:SQ120TO64[newPos120]}
+
+                this.moveList.push(move);
 
                 //break loop after finding first opponent piece 
                 if(board[SQ120TO64[newPos120]]!='')break;
@@ -129,7 +131,9 @@ export class King extends Piece{
             let newPos120 = SQ64TO120[this.pos] + offset;
             if(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
             {
-                this.moveList.push(SQ120TO64[newPos120]);
+                const move = {from:this.pos,to:SQ120TO64[newPos120]}
+
+                this.moveList.push(move);
             }
         })
         return this.moveList;
@@ -152,12 +156,12 @@ export class Pawn extends Piece{
         
         if(oneSquareMove!=-1&&board[oneSquareMove]=='')
         {
-            this.moveList.push(oneSquareMove);
+            this.moveList.push({from:this.pos,to:oneSquareMove});
 
             const twoSquareMove  = SQ120TO64[pos120+(this.#baseMove*2)*color];
             if(this.isOnStart(pos120)&&board[twoSquareMove]=='')
             {
-                this.moveList.push(twoSquareMove);
+                this.moveList.push({from:this.pos,to:twoSquareMove});
             }
         }
         

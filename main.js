@@ -85,19 +85,34 @@ class Board{
     {
         return this.#board;
     }
+    generateAllMoves(side)
+    {
+        let moves=[];
+        this.#board.forEach(piece=>{
+            if(piece.isWhite==side)
+            {
+                const pieceMoves = piece.generateMoves(this.#board);
+                if(pieceMoves.length==0)return;
+                moves.push(...pieceMoves);
+            }
+        })
+       return moves;
+    }
+
 }
 
 class GameState{
     #turn=1;//1-white  0-black
-    #activePiece;
+    #selectedSquare;
     #boardObj
+    #moves;
     constructor()
     {
         this.#boardObj= new Board();
        
        
         this.renderBoard();
-        
+        this.#moves = this.#boardObj.generateAllMoves(this.#turn);
        
     }
     renderBoard()
@@ -145,7 +160,6 @@ class GameState{
     }
     selectPiece(piecePos)
     {
-        console.log(this.#boardObj.getBoard())
         const tiles = document.querySelectorAll(".tile");
         const resetActiveTiles = (()=>{
             document.querySelector('.active-square')?.classList.remove("active-square");
@@ -157,13 +171,12 @@ class GameState{
             })
         })
 
-        const selectedPiece = this.#boardObj.getPieceByPos(piecePos);
-        if(selectedPiece.isWhite!=this.#turn)return;
-
+        const moves = this.#moves.filter((move)=>move.from==piecePos);
+        if(moves.length==0)return;
+        
         resetActiveTiles();
-        const moves = this.#boardObj.getPieceMoves(piecePos);
         tiles[piecePos].classList.add('active-square');
-        this.#activePiece = selectedPiece;
+        this.#selectedSquare = piecePos;
         this.renderMoves(moves);
         
         document.querySelectorAll(".available-move").forEach((sq)=>{
@@ -178,14 +191,15 @@ class GameState{
     movePiece(to)
     {
         this.#turn = !this.#turn;
-        this.#boardObj.setNewPosition(this.#activePiece.pos,to);
+        this.#boardObj.setNewPosition(this.#selectedSquare,to);
+        this.#moves = this.#boardObj.generateAllMoves(this.#turn);
         this.renderBoard();
     }
     renderMoves(moves)
     {
         const tiles = document.querySelectorAll(".tile");
         moves.forEach((move)=>{
-            tiles[move].classList.add('available-move');
+            tiles[move.to].classList.add('available-move');
         })
     }    
 }
