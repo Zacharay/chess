@@ -1,7 +1,10 @@
 import { Bishop, King, Knight, Pawn, Queen ,Rock} from "./pieces.js";
+import { KING_DIR,KNIGHT_DIR,BISHOP_DIR,ROCK_DIR } from "./helpers.js";
 import { SQ120TO64,SQ64TO120 } from "./helpers.js";
 class Board{
     #board = Array(64).fill('');
+    #attackedByWhite=[];
+    #attackedByBlack=[];
     constructor(fenNotation = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     {
         this._fenToBoard(fenNotation)
@@ -87,17 +90,166 @@ class Board{
     }
     generateAllMoves(side)
     {
+        
+
+        console.log(this.#attackedByBlack,this.#attackedByWhite);
         let moves=[];
         this.#board.forEach(piece=>{
             if(piece.isWhite==side)
             {
                 const pieceMoves = piece.generateMoves(this.#board);
                 if(pieceMoves.length==0)return;
+
+              
                 moves.push(...pieceMoves);
             }
         })
        return moves;
     }
+    generateAttackedSquares(side)
+    {   
+            let attacks=[]
+
+            this.#board.forEach(piece=>{
+                if(piece!=''&&piece.isWhite!=side)
+                {
+                    let pieceMoves=[];
+                    let attackSquares=[];
+                    if(piece.type=='Pawn')
+                    {
+                        pieceMoves = piece.generateMoves(this.#board).map(obj=>obj.to);
+                        attackSquares = piece.generateAttackMoves(this.#board).map(obj=>obj.to);
+
+                    }
+                    else{
+                        pieceMoves = piece.generateMoves(this.#board).map(obj=>obj.to);
+                    }
+                    attacks.push(pieceMoves)
+                    
+                }
+            })
+
+        if(side)
+        {
+            
+        }
+    
+            
+        
+    }
+    _isSquareAttacked(sq,side)
+    {
+        sq = SQ64TO120[sq];
+        //white side Pawns
+        /*if(side)
+        {
+            console.log(sq+9)
+            console.log(SQ120TO64)
+            console.log(SQ120TO64[sq+9])
+            console.log(this.#board[SQ120TO64[sq+9]]);
+            if(
+                (this.#board[SQ120TO64[sq+9]]?.type=='Pawn'&&this.#board[SQ120TO64[sq+9]]?.isWhite==side)||
+                (this.#board[SQ120TO64[sq+11]]?.type=='Pawn'&&this.#board[SQ120TO64[sq+11]]?.isWhite==side))
+            {
+                console.log(this.#board);
+                return true;
+            }
+        }
+        //Black side pawns
+        else{
+            if(
+            (this.#board[SQ120TO64[sq+9]]?.type=='Pawn'&&this.#board[SQ120TO64[sq+9]]?.isWhite==side)||
+            (this.#board[SQ120TO64[sq-11]]?.type=='Pawn'&&this.#board[SQ120TO64[sq-11]]?.isWhite==side))
+            {
+                return true;
+            } 
+        }*/
+
+
+        //check knight attacks
+        for(let i=0;i<KNIGHT_DIR.length;i++)
+        {
+            const dir = KNIGHT_DIR[i];
+            const temp_sq = sq + dir;
+            if(SQ120TO64[temp_sq]==-1)return;
+            const piece = this.#board[SQ120TO64[temp_sq]]
+            if(piece!=''&&piece.type=='Knight'&&piece.isWhite==side)
+            {
+                console.log("test");
+                return true;
+            }
+        }
+        //check bishop and queen attacks(diagonal)
+        for(let i=0;i<BISHOP_DIR.length;i++)
+        BISHOP_DIR.forEach((dir)=>{
+            let pos120 = sq+dir;
+            let temp_sq =SQ120TO64[pos120];
+            if(temp_sq==-1)return;
+            let piece = this.#board[temp_sq];
+            while(temp_sq!=-1)
+            {
+                if(piece!='')
+                {
+                    if(piece.type=='Bishop'||piece.type=='Queen'&&piece.isWhite==side)
+                    {
+                        return true;
+                    }
+                    break;
+                }
+                pos120 +=dir;
+                temp_sq = SQ120TO64[pos120];
+            }
+        })
+        
+        //check bishop and queen attacks(diagonal)
+        ROCK_DIR.forEach((dir)=>{
+            let pos120 = sq+dir;
+            let temp_sq =SQ120TO64[pos120];
+            if(temp_sq==-1)return;
+            let piece = this.#board[temp_sq];
+            while(temp_sq!=-1)
+            {
+                if(piece!='')
+                {
+                    if(piece.type=='Rook'||piece.type=='Queen'&&piece.isWhite==side)
+                    {
+                        return true;
+                    }
+                    break;
+                }
+                pos120 +=dir;
+                temp_sq = SQ120TO64[pos120];
+            }
+        })
+        KING_DIR.forEach(dir=>{
+            const temp_sq = SQ120TO64[dir+sq];
+            if(temp_sq==-1)return;
+            const piece = this.#board[temp_sq]
+            if(piece!=''&&piece.type=='King'&&piece.isWhite==side)
+            {
+                return true;
+            }
+
+        })
+        return false;
+    }
+    _printAttackedSquares()
+    {
+        for(let i=0;i<8;i++)
+        {
+            let str = '';
+            for(let j=0;j<8;j++)
+            {
+                const sq = j + i*8;
+                
+                const result = this._isSquareAttacked(sq,1);
+                console.log(result);
+                str=`${str} ${result?'1':'0'}`;
+            }
+            console.log(str);
+        }
+    }
+
 
 }
 

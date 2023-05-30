@@ -14,3 +14,9 @@ for(let rank=0;rank<8;rank++)
     }
     sq64+=2;
 }
+
+export const KNIGHT_DIR= [-21,-19,-8,12,21,19,-12,8];
+export const ROCK_DIR= [10,-10,1,-1];
+export const BISHOP_DIR= [11,-11,9,-9];
+export const QUEEN_DIR= [11,-11,9,-9,10,-10,1,-1];
+export const KING_DIR= [10,-10,11,-11,9,-9,1,-1];

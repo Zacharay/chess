@@ -1,9 +1,10 @@
-import { SQ120TO64,SQ64TO120 } from "./helpers.js";
+import { SQ120TO64,SQ64TO120,KING_DIR,KNIGHT_DIR,ROCK_DIR,BISHOP_DIR,QUEEN_DIR } from "./helpers.js";
 class Piece{
     moveList=[];
     pos;
     isWhite;
     symbol;
+    type;
     constructor(white,pos)
     {
         this.isWhite =white;
@@ -13,11 +14,11 @@ class Piece{
 }
 export class Knight extends Piece{
 
-    #offsets = [-21,-19,-8,12,21,19,-12,8]
+    #offsets = KNIGHT_DIR;
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='N';
-        
+        this.type = 'Knight'
     }
     generateMoves(board)
     {
@@ -38,10 +39,11 @@ export class Knight extends Piece{
 }
 export class Rock extends Piece{
 
-    #offsets = [10,-10,1,-1];
+    #offsets = ROCK_DIR;
     constructor(white,pos) {
         super(white,pos);
         this.symbol+='R';
+        this.type = 'Rock'
     }
     generateMoves(board)
     {
@@ -65,10 +67,11 @@ export class Rock extends Piece{
 }
 export class Bishop extends Piece{
 
-    #offsets =[11,-11,9,-9];
+    #offsets =BISHOP_DIR;
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='B';
+        this.type = 'Bishop'
     }
     generateMoves(board)
     {
@@ -92,10 +95,11 @@ export class Bishop extends Piece{
 }
 export  class Queen extends Piece{
 
-    #offsets = [11,-11,9,-9,10,-10,1,-1]
+    #offsets = QUEEN_DIR;
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='Q';
+        this.type = 'Queen'
     }
     generateMoves(board)
     {
@@ -119,10 +123,11 @@ export  class Queen extends Piece{
 }
 export class King extends Piece{
 
-    #offsets = [10,-10,11,-11,9,-9,1,-1];
+    #offsets = KING_DIR;
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='K';
+        this.type = 'King'
     }
     generateMoves(board)
     {
@@ -145,6 +150,7 @@ export class Pawn extends Piece{
     constructor(white,pos) {
         super(white,pos);
         this.symbol +='P';
+        this.type = 'Pawn'
     }
     generateMoves(board)
     {
@@ -164,19 +170,25 @@ export class Pawn extends Piece{
                 this.moveList.push({from:this.pos,to:twoSquareMove});
             }
         }
-        
-        
+        return this.moveList;
+    }
+    generateAttackMoves(board)
+    {
+        const pos120 = SQ64TO120[this.pos];
+        const color = this.isWhite?1:-1;
+        const attackMoves =[];
         const leftDiagonalMove= SQ120TO64[pos120+(this.#baseMove-1)*color];
         if(leftDiagonalMove!=-1&&board[leftDiagonalMove]!=''&&board[leftDiagonalMove].isWhite!=this.isWhite)
         {
-            this.moveList.push(leftDiagonalMove);
+            this.moveList.push({from:this.pos,to:leftDiagonalMove});
         }
         const rightDiagonalMove = SQ120TO64[pos120+(this.#baseMove+1)*color];
         if(rightDiagonalMove!=-1&&board[rightDiagonalMove]!=''&&board[rightDiagonalMove].isWhite!=this.isWhite)
         {
-            this.moveList.push(rightDiagonalMove);
+            this.moveList.push({from:this.pos,to:rightDiagonalMove});
         }
-        return this.moveList;
+
+        return attackMoves;
     }
     isOnStart(pos)
     {
@@ -188,5 +200,4 @@ export class Pawn extends Piece{
         else return false;
     }
 }
-
 
