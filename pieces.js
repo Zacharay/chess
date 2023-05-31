@@ -43,7 +43,7 @@ export class Rock extends Piece{
     constructor(white,pos) {
         super(white,pos);
         this.symbol+='R';
-        this.type = 'Rock'
+        this.type = 'Rook'
     }
     generateMoves(board)
     {
@@ -170,13 +170,7 @@ export class Pawn extends Piece{
                 this.moveList.push({from:this.pos,to:twoSquareMove});
             }
         }
-        return this.moveList;
-    }
-    generateAttackMoves(board)
-    {
-        const pos120 = SQ64TO120[this.pos];
-        const color = this.isWhite?1:-1;
-        const attackMoves =[];
+
         const leftDiagonalMove= SQ120TO64[pos120+(this.#baseMove-1)*color];
         if(leftDiagonalMove!=-1&&board[leftDiagonalMove]!=''&&board[leftDiagonalMove].isWhite!=this.isWhite)
         {
@@ -188,6 +182,25 @@ export class Pawn extends Piece{
             this.moveList.push({from:this.pos,to:rightDiagonalMove});
         }
 
+        return this.moveList;
+    }
+
+    generateAttackMoves(board)
+    {
+        const pos120 = SQ64TO120[this.pos];
+        const color = this.isWhite?1:-1;
+        const attackMoves =[];
+        const leftDiagonalMove= SQ120TO64[pos120+(this.#baseMove-1)*color];
+        if(leftDiagonalMove!=-1)
+        {
+            attackMoves.push({from:this.pos,to:leftDiagonalMove});
+        }
+        const rightDiagonalMove = SQ120TO64[pos120+(this.#baseMove+1)*color];
+        if(rightDiagonalMove!=-1)
+        {
+            attackMoves.push({from:this.pos,to:rightDiagonalMove});
+        }
+        
         return attackMoves;
     }
     isOnStart(pos)
