@@ -7,11 +7,27 @@ export default class MoveGenerator{
     }
     getLegalMoves(side)
     {
+        const legalMoves = [];
         const board = this.#boardObj.getBoard();
-        const pseudoLegalMoves = this._generateAllMoves(side,board);
-        return pseudoLegalMoves;
+        const pseudoLegalMoves = this._generatePseudoLegal(side,board);
+        pseudoLegalMoves.forEach((moveToCheck)=>{
+
+            //make move
+            const prevVal = this.#boardObj.makeMove(moveToCheck);
+            const newBoard = this.#boardObj.getBoard();
+            const kingPos = this.#boardObj.getKingPos(side);
+            //check if legal
+            if(!this._isSquareAttacked(kingPos,!side,newBoard))
+            {
+                legalMoves.push(moveToCheck);
+            }
+            //unmake move
+           this.#boardObj.unmakeMove(moveToCheck,prevVal);
+        })
+        
+        return legalMoves;
     }
-    _generateAllMoves(side,board)
+    _generatePseudoLegal(side,board)
     {     
         let moves=[];
         board.forEach(piece=>{

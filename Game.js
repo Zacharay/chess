@@ -16,10 +16,10 @@ export default class Game{
     {
         return this.#boardObj.getBoard();
     }
-    movePiece(from,to)
+    movePiece(move)
     {
         this.#turn = this.#turn==1?0:1;
-        this.#boardObj.setNewPosition(from,to);
+        this.#boardObj.makeMove(move);
         this.#moves = this.#moveGenerator.getLegalMoves(this.#turn);
     }
     getPieceMoves(piecePos)

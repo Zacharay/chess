@@ -2,7 +2,7 @@ import { Bishop, King, Knight, Pawn, Queen ,Rock} from "./pieces.js";
 
 export default class Board{
     #board = Array(64).fill('');
-    #kingsPos = [4,60]//0 black king 1 white king 
+    #kings=[];//0 black king 1 white king 
     constructor(fenNotation = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     {
         this._fenToBoard(fenNotation)
@@ -55,24 +55,36 @@ export default class Board{
         }
         else if(symbol=='k')
         {
-            return new King(color,pos)
+            const king = new King(color,pos);
+            this.#kings[color]=king;
+            return king;
+
         }
 
     }
-    setNewPosition(from,to)
+    makeMove(move)
     {
-        if(this.#board[to]!=''){
-            const audio = new Audio('sounds/capture.mp3');
-            audio.play();
-        }
-        else{
-            const audio = new Audio('sounds/move-self.mp3');
-            audio.play();
-        }
-        this.#board[from].pos = to;
+        // if(this.#board[move.to]!=''){
+        //     const audio = new Audio('sounds/capture.mp3');
+        //     audio.play();
+        // }
+        // else{
+        //     const audio = new Audio('sounds/move-self.mp3');
+        //     audio.play();
+        // }
+        this.#board[move.from].pos = move.to;
+        const temp =this.#board[move.to];
+        this.#board[move.to]=this.#board[move.from];
+        this.#board[move.from]='';
+        return temp;
+    }
+    unmakeMove(move,prevVal)
+    {
+       
+        this.#board[move.to].pos = move.from;
 
-        this.#board[to]=this.#board[from];
-        this.#board[from]='';
+        this.#board[move.from]=this.#board[move.to];
+        this.#board[move.to]=prevVal;
     }
     getBoard()
     {
@@ -80,7 +92,7 @@ export default class Board{
     }
     getKingPos(side)
     {
-        return this.#kingsPos[side];
+        return this.#kings[side].pos;
     }
 
 

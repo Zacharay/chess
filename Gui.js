@@ -83,7 +83,8 @@ class GUI{
     }
     _handleMove(to)
     {
-        this.#game.movePiece(this.#selectedSquare,to);
+        const move = {from:this.#selectedSquare,to};
+        this.#game.movePiece(move);
         this._renderBoard();
     }
     _renderMoves(moves)
