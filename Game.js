@@ -5,6 +5,7 @@ export default class Game{
     #turn=1;//1-white  0-black
     #moveGenerator; 
     #moves;
+    #gameState='active'
     constructor()
     {
        
@@ -21,9 +22,28 @@ export default class Game{
         this.#turn = this.#turn==1?0:1;
         this.#boardObj.makeMove(move);
         this.#moves = this.#moveGenerator.getLegalMoves(this.#turn);
+        this._checkGameState(this.#turn,this.#moves);
     }
     getPieceMoves(piecePos)
     {
         return this.#moves.filter((pos)=>pos.from==piecePos);
+    }
+    _checkGameState(side,moves)
+    {
+        if(moves.length>0)return;
+
+        const kingPos = this.#boardObj.getKingPos(side);
+        const winner = side==1?'Black':'White';
+        if(this.#moveGenerator.isSquareAttacked(kingPos,!side,this.#boardObj.getBoard()))
+        {
+            this.#gameState = `${winner} wins`;
+        }
+        else{
+            this.#gameState = `Draw`;
+        }
+    }
+    getGameState()
+    {
+        return this.#gameState
     }
 }

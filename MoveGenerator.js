@@ -14,10 +14,11 @@ export default class MoveGenerator{
 
             //make move
             const prevVal = this.#boardObj.makeMove(moveToCheck);
+
             const newBoard = this.#boardObj.getBoard();
             const kingPos = this.#boardObj.getKingPos(side);
             //check if legal
-            if(!this._isSquareAttacked(kingPos,!side,newBoard))
+            if(!this.isSquareAttacked(kingPos,!side,newBoard))
             {
                 legalMoves.push(moveToCheck);
             }
@@ -42,7 +43,7 @@ export default class MoveGenerator{
         })
        return moves;
     }
-    _isSquareAttacked(sq,side,board)
+    isSquareAttacked(sq,side,board)
     {
         sq = SQ64TO120[sq];
         
@@ -141,21 +142,5 @@ export default class MoveGenerator{
 
         }
         return false;
-    }
-    _printAttackedSquares(side)
-    {
-        for(let i=0;i<8;i++)
-        {
-            let str = '';
-            for(let j=0;j<8;j++)
-            {
-                const sq = j + i*8;
-                const result = this._isSquareAttacked(sq,side,[]);
-
-                
-                str = `${str} ${result?'1':'0'}`;
-            }
-            console.log(i+': '+str);
-        }
     }
 }

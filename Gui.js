@@ -84,8 +84,32 @@ class GUI{
     _handleMove(to)
     {
         const move = {from:this.#selectedSquare,to};
+        this._soundHandler(move);
         this.#game.movePiece(move);
+        this._isGameOver();
         this._renderBoard();
+    }
+    _soundHandler(move)
+    {
+        const board = this.#game.getBoard();
+
+        if(board[move.to]!=''){
+            const audio = new Audio('sounds/capture.mp3');
+            audio.play();
+        }
+        else{
+            const audio = new Audio('sounds/move-self.mp3');
+            audio.play();
+        }
+    }
+    _isGameOver()
+    {
+        const gameState = this.#game.getGameState();
+        if(gameState=='active')return;
+        else{
+            const gameResult = document.querySelector(".game-result");
+            gameResult.innerHTML = gameState;
+        }
     }
     _renderMoves(moves)
     {

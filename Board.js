@@ -64,24 +64,19 @@ export default class Board{
     }
     makeMove(move)
     {
-        // if(this.#board[move.to]!=''){
-        //     const audio = new Audio('sounds/capture.mp3');
-        //     audio.play();
-        // }
-        // else{
-        //     const audio = new Audio('sounds/move-self.mp3');
-        //     audio.play();
-        // }
-        this.#board[move.from].pos = move.to;
-        const temp =this.#board[move.to];
+        
+        this.#board[move.from].movePiece(move.to);
+
+        const pieceOnCapturedSquare =this.#board[move.to];
+        
         this.#board[move.to]=this.#board[move.from];
         this.#board[move.from]='';
-        return temp;
+        return  pieceOnCapturedSquare;
     }
     unmakeMove(move,prevVal)
     {
-       
-        this.#board[move.to].pos = move.from;
+        
+        this.#board[move.to].movePiece(move.from); 
 
         this.#board[move.from]=this.#board[move.to];
         this.#board[move.to]=prevVal;

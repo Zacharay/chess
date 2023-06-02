@@ -11,6 +11,10 @@ class Piece{
         this.symbol = this.isWhite?'w':'b';
         this.pos = pos;
     }
+    movePiece(pos)
+    {
+        this.pos = pos; 
+    }
 }
 export class Knight extends Piece{
 
@@ -40,6 +44,7 @@ export class Knight extends Piece{
 export class Rock extends Piece{
 
     #offsets = ROCK_DIR;
+    #isOnStart=true;
     constructor(white,pos) {
         super(white,pos);
         this.symbol+='R';
@@ -63,6 +68,11 @@ export class Rock extends Piece{
             }
         })
         return this.moveList;
+    }
+    movePiece(to)
+    {
+        this.#isOnStart = false;
+        this.pos = to;
     }
 }
 export class Bishop extends Piece{

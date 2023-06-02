@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 *{
     margin:0;
     padding:0;
     box-sizing: border-box;
 }
 body{
+    font-family: 'Montserrat', sans-serif;
     display:flex;
     justify-content: center;
     align-items: center;
@@ -68,4 +70,68 @@ body{
     width:100%;
     height:100%;
     z-index: 1;
+}
+.result-modal{
+    position: absolute;
+    background-color: white;
+    color:white;
+    padding:16px;
+    text-align: center;
+    overflow: hidden; 
+    box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+}
+.result-modal::after{
+    content: '';
+    width:50%;
+    height:50px;
+    background-color:#495057;
+    position: absolute;
+    top:0;
+    left: 50%;
+    z-index: 4;
+    
+    border-radius: 100%;
+    transform: translate(-50%,-50%) scale(4.5);
+}
+.result-modal img{
+    width:200px;
+    
+}
+.winner-img{
+    border:5px solid #779556;
+}
+.loser-img{
+    border:5px solid red;
+}
+.draw-img{
+    border:5px solid #495057;
+}
+.result-modal h1{
+    position:relative;
+    font-weight: 700;
+    font-size:48px;
+    z-index: 5;
+}
+.result-modal h3{
+    position:relative;
+    font-weight: 500;
+    font-size:16px;
+    z-index: 5;
+}
+.result-modal div{
+    display: flex;
+    gap:48px;
+    margin-top:32px;
+    margin-bottom:16px;
+}
+.reset-btn{
+    background-color:#95BB4A;
+    border:none;
+    outline: none;
+    font-size:32px;
+    font-weight: 700;
+    color:white;
+    padding:16px 32px;
+    cursor: pointer;
+    border-radius:7px;
 }
