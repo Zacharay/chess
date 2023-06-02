@@ -2,6 +2,8 @@ import Board from "./Board.js";
 import MoveGenerator from "./MoveGenerator.js";
 export default class Game{
     #boardObj;
+    aiSide = 0;
+    playerSide = 1;
     #turn=1;//1-white  0-black
     #moveGenerator; 
     #moves;
@@ -33,13 +35,13 @@ export default class Game{
         if(moves.length>0)return;
 
         const kingPos = this.#boardObj.getKingPos(side);
-        const winner = side==1?'Black':'White';
+        const winner = side==1?'black':'white';
         if(this.#moveGenerator.isSquareAttacked(kingPos,!side,this.#boardObj.getBoard()))
         {
-            this.#gameState = `${winner} wins`;
+            this.#gameState = winner;
         }
         else{
-            this.#gameState = `Draw`;
+            this.#gameState = `draw`;
         }
     }
     getGameState()

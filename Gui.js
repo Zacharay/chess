@@ -3,9 +3,16 @@ class GUI{
    
     #selectedSquare;
     #game
+    #aiSide;
+    #playerSide;
     constructor()
     {
+       
         this.#game = new Game();
+        this.#aiSide = this.#game.aiSide;
+        this.#playerSide = this.#game.playerSide;
+        const gameResultModal = document.querySelector(".result-modal");
+        gameResultModal.classList.add('hidden')
         this._renderBoard();
        
     }
@@ -23,7 +30,7 @@ class GUI{
                 let piece;
                 if(board[boardIdx].symbol)
                 {
-                    piece = board[boardIdx].symbol;
+                    piece = board[boardIdx];
                     isEmpty = false;
                 }
                 else{
@@ -31,7 +38,7 @@ class GUI{
                 }
                 const tileType = (file+rank)%2==0?'white':'black';
                 html+=`<div class='tile tile-${tileType}' data-pos='${boardIdx}'>
-                ${!isEmpty?`<img src='piecesImg/${piece}.png' class='piece'/>`:''}
+                ${!isEmpty?`<img src='piecesImg/${piece.symbol}.png' data-color=${piece.isWhite} class='piece'/>`:''}
                 </div>`
             }
         }
@@ -45,10 +52,14 @@ class GUI{
             piece.ondragstart = ()=>{
                 return false;
             }
-            const piecePos = piece.closest(".tile").getAttribute('data-pos');
-            piece.addEventListener('click',()=>{
-                this.selectPiece(piecePos);
-            })
+            const pieceColor = piece.getAttribute('data-color');
+            if(pieceColor==this.#playerSide)
+            {
+                const piecePos = piece.closest(".tile").getAttribute('data-pos');
+                piece.addEventListener('click',()=>{
+                    this.selectPiece(piecePos);
+                })
+            }    
         })
     }
     selectPiece(piecePos)
@@ -86,8 +97,9 @@ class GUI{
         const move = {from:this.#selectedSquare,to};
         this._soundHandler(move);
         this.#game.movePiece(move);
-        this._isGameOver();
+       
         this._renderBoard();
+        this._isGameOver();
     }
     _soundHandler(move)
     {
@@ -106,10 +118,29 @@ class GUI{
     {
         const gameState = this.#game.getGameState();
         if(gameState=='active')return;
-        else{
-            const gameResult = document.querySelector(".game-result");
-            gameResult.innerHTML = gameState;
+
+        const gameResultModal = document.querySelector(".result-modal");
+        const whiteModalImg = document.querySelector("#modal--white-side");
+        const blackModalImg = document.querySelector("#modal--black-side");
+
+        
+        if(gameState=='black')
+        {
+            blackModalImg.classList.add("winner-img");
+            whiteModalImg.classList.add("loser-img");
         }
+        else if(gameState =='white')
+        {
+            whiteModalImg.classList.add("winner-img");
+            blackModalImg.classList.add("loser-img");
+        }
+        else{
+            whiteModalImg.classList.add("draw-img");
+            blackModalImg.classList.add("draw-img");
+        }
+
+        gameResultModal.classList.remove('hidden');
+
     }
     _renderMoves(moves)
     {
@@ -120,4 +151,10 @@ class GUI{
     }    
     
 }
-const app = new GUI();
+let app = new GUI();
+
+const resetBtn = document.querySelector(".reset-btn");
+resetBtn.addEventListener('click',resetGame);
+function resetGame(){
+    app = new GUI();
+}

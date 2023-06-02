@@ -78,6 +78,7 @@ body{
     padding:16px;
     text-align: center;
     overflow: hidden; 
+    z-index: 3;
     box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
 }
 .result-modal::after{
@@ -94,8 +95,7 @@ body{
     transform: translate(-50%,-50%) scale(4.5);
 }
 .result-modal img{
-    width:200px;
-    
+    width:160px;
 }
 .winner-img{
     border:5px solid #779556;
@@ -134,4 +134,7 @@ body{
     padding:16px 32px;
     cursor: pointer;
     border-radius:7px;
+}
+.hidden{
+    display:none;
 }
