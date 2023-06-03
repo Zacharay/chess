@@ -7,6 +7,7 @@ class Piece{
     type;
     #isSlidingPiece
     #offsets;
+    isOnStart=true;
     constructor(isWhite,pos,isSlidingPiece,offsets)
     {
         this.isWhite =isWhite;
@@ -65,7 +66,6 @@ class Piece{
                 this.moveList.push(move);
             })
         }
-        
         return this.moveList.map(move=>this.getMoveType(move,board));;
     }
     
@@ -80,16 +80,10 @@ export class Knight extends Piece{
 }
 export class Rock extends Piece{
 
-    #isOnStart=true;
     constructor(white,pos) {
         super(white,pos,true,ROCK_DIR);
         this.symbol+='R';
         this.type = 'Rook'
-    }
-    movePiece(to)
-    {
-        this.#isOnStart = false;
-        this.pos = to;
     }
 }
 export class Bishop extends Piece{
@@ -112,6 +106,45 @@ export class King extends Piece{
         super(white,pos,false,KING_DIR);
         this.symbol +='K';
         this.type = 'King'
+    }
+    generateMoves(board,isSquareAttacked)
+    {
+        const checkCastlingMoves = ()=>{
+            const isInCheck = isSquareAttacked(this.pos,!this.isWhite,board)
+            if(isInCheck||!this.isOnStart)return;
+
+            let castlingMoves=[];
+
+            const isQueenSideEmpty = board[this.pos-1]==''&&board[this.pos-2]==''&&board[this.pos-3]=='';
+            const hasLeftRockMoved = board[this.pos-4].type=='Rock'&&board[this.pos-4].isOnStart == true;
+            const leftSquaresAttacked = 
+            isSquareAttacked(this.pos-1,!this.isWhite,board)|| 
+            isSquareAttacked(this.pos-2,!this.isWhite,board)|| 
+            isSquareAttacked(this.pos-3,!this.isWhite,board);
+            const canCastleQueenside = isQueenSideEmpty&&!hasLeftRockMoved&&!leftSquaresAttacked
+
+            if(canCastleQueenside)
+            {
+                const castleMove = {from:this.pos,to:this.pos-2,type:'castling',side:'Queen'}
+                castlingMoves.push(castleMove);
+            }
+            const isKingSideEmpty = board[this.pos+1]==''&&board[this.pos+2]=='';
+            const hasRightRockMoved = board[this.pos+3].type=='Rock'&&board[this.pos+3].isOnStart == true;
+            const rightSquaresAttacked = isSquareAttacked(this.pos+1,!this.isWhite,board)|| isSquareAttacked(this.pos+2,!this.isWhite,board);
+            const canCastleKingside = isKingSideEmpty&&!hasRightRockMoved&&!rightSquaresAttacked
+            if(canCastleKingside)
+            {
+                const castleMove = {from:this.pos,to:this.pos+2,type:'castling',side:'King'}
+                castlingMoves.push(castleMove);
+            }
+            return castlingMoves;
+        }
+        const castlingMoves = checkCastlingMoves();
+        const normalMoves = super.generateMoves(board);
+        if(!castlingMoves)return normalMoves;
+
+        this.moveList = [...castlingMoves,...normalMoves];
+        return this.moveList;
     }
 }
 export class Pawn extends Piece{
@@ -136,7 +169,7 @@ export class Pawn extends Piece{
             this.moveList.push(move);
 
             const twoSquareMove  = SQ120TO64[pos120+(this.#baseMove*2)*color];
-            if(this.isOnStart(pos120)&&board[twoSquareMove]=='')
+            if(this.isOnStart&&board[twoSquareMove]=='')
             {
                 const move = {from:this.pos,to:twoSquareMove}
                 this.moveList.push(move);
@@ -158,14 +191,5 @@ export class Pawn extends Piece{
         return this.moveList.map(move=>this.getMoveType(move,board));
     }
 
-    isOnStart(pos)
-    {
-        pos = Math.floor(pos/10);
-        if((pos==3&&!this.isWhite)||(pos==8&&this.isWhite))
-        {
-            return true;
-        }
-        else return false;
-    }
 }
 

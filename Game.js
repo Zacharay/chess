@@ -36,6 +36,12 @@ class Game{
     }
     makeMove(move)
     {
+        if(move.type=='castling')
+        {
+            const kingPos = move.from;
+            if(move.side=='King')this.#boardObj.makeMove({from:kingPos+3,to:kingPos+1});
+            else this.#boardObj.makeMove({from:kingPos-4,to:kingPos-1});
+        }
         this.#boardObj.makeMove(move);
         
         this.#turn = this.#turn==1?0:1;

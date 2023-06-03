@@ -11,9 +11,12 @@ export default class MoveGenerator{
         const board = this.#boardObj.getBoard();
         const pseudoLegalMoves = this._generatePseudoLegalMoves(side,board);
         pseudoLegalMoves.forEach((moveToCheck)=>{
-
+            if(moveToCheck.type=='castling'){
+                legalMoves.push(moveToCheck);
+                return;
+            }
             //make move
-            const prevVal = this.#boardObj.makeMove(moveToCheck);
+            const prevVal = this.#boardObj.makeMove(moveToCheck,false);
 
             const newBoard = this.#boardObj.getBoard();
             const kingPos = this.#boardObj.getKingPos(side);
@@ -23,7 +26,7 @@ export default class MoveGenerator{
                 legalMoves.push(moveToCheck);
             }
             //unmake move
-           this.#boardObj.unmakeMove(moveToCheck,prevVal);
+            this.#boardObj.unmakeMove(moveToCheck,prevVal);
         })
         
         return legalMoves;
@@ -34,7 +37,7 @@ export default class MoveGenerator{
         board.forEach(piece=>{
             if(piece.isWhite==side)
             {
-                const pieceMoves = piece.generateMoves(board);
+                const pieceMoves = piece.generateMoves(board,this.isSquareAttacked);
                 if(pieceMoves.length==0)return;
 
               

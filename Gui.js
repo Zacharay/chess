@@ -100,11 +100,15 @@ export default class GUI{
     soundHandler(moveType)
     {
         if(moveType=='capture'){
-            const audio = new Audio('sounds/capture.mp3');
+            const audio = new Audio('sounds/captureMove.mp3');
             audio.play();
         }
         else if(moveType =='normal'){
-            const audio = new Audio('sounds/move-self.mp3');
+            const audio = new Audio('sounds/normalMove.mp3');
+            audio.play();
+        }
+        else if(moveType =='castling'){
+            const audio = new Audio('sounds/castleMove.mp3');
             audio.play();
         }
     }

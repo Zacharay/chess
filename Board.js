@@ -62,9 +62,10 @@ export default class Board{
         }
 
     }
-    makeMove(move)
+    makeMove(move,trueMove=true)
     {
-        
+        if(trueMove)this.#board[move.from].isOnStart = false;
+         
         this.#board[move.from].movePiece(move.to);
 
         const pieceOnCapturedSquare =this.#board[move.to];
