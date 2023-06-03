@@ -1,22 +1,21 @@
-import Game from "./Game.js";
-class GUI{
+export default class GUI{
    
     #selectedSquare;
     #game
     #aiSide;
     #playerSide;
-    constructor()
+    constructor(game)
     {
        
-        this.#game = new Game();
+        this.#game =game;
         this.#aiSide = this.#game.aiSide;
         this.#playerSide = this.#game.playerSide;
         const gameResultModal = document.querySelector(".result-modal");
         gameResultModal.classList.add('hidden')
-        this._renderBoard();
+        this.renderBoard();
        
     }
-    _renderBoard()
+    renderBoard()
     {
         const board = this.#game.getBoard();
         const grid = document.querySelector(".grid");
@@ -75,7 +74,7 @@ class GUI{
             })
         })
 
-        const moves = this.#game.getPieceMoves(piecePos);
+        const moves = this.#game.getPieceMoves(piecePos,this.#playerSide);
         if(moves.length==0)return;
         
         resetActiveTiles();
@@ -86,39 +85,31 @@ class GUI{
         document.querySelectorAll(".available-move").forEach((sq)=>{
            const to= sq.getAttribute('data-pos')/1;
             sq.addEventListener('click',()=>{
-                this._handleMove(to)
+                this._handleMove(to,moves)
             })
         })
        
 
     }
-    _handleMove(to)
+    _handleMove(to,moves)
     {
-        const move = {from:this.#selectedSquare,to};
-        this._soundHandler(move);
-        this.#game.movePiece(move);
-       
-        this._renderBoard();
-        this._isGameOver();
+        
+        const move = moves.find(move=>move.from ==this.#selectedSquare&&move.to == to);
+        this.#game.playOneTurn(move);
     }
-    _soundHandler(move)
+    soundHandler(moveType)
     {
-        const board = this.#game.getBoard();
-
-        if(board[move.to]!=''){
+        if(moveType=='capture'){
             const audio = new Audio('sounds/capture.mp3');
             audio.play();
         }
-        else{
+        else if(moveType =='normal'){
             const audio = new Audio('sounds/move-self.mp3');
             audio.play();
         }
     }
-    _isGameOver()
+    gameOverState(gameState)
     {
-        const gameState = this.#game.getGameState();
-        if(gameState=='active')return;
-
         const gameResultModal = document.querySelector(".result-modal");
         const whiteModalImg = document.querySelector("#modal--white-side");
         const blackModalImg = document.querySelector("#modal--black-side");
@@ -151,10 +142,4 @@ class GUI{
     }    
     
 }
-let app = new GUI();
 
-const resetBtn = document.querySelector(".reset-btn");
-resetBtn.addEventListener('click',resetGame);
-function resetGame(){
-    app = new GUI();
-}

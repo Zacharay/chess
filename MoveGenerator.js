@@ -9,7 +9,7 @@ export default class MoveGenerator{
     {
         const legalMoves = [];
         const board = this.#boardObj.getBoard();
-        const pseudoLegalMoves = this._generatePseudoLegal(side,board);
+        const pseudoLegalMoves = this._generatePseudoLegalMoves(side,board);
         pseudoLegalMoves.forEach((moveToCheck)=>{
 
             //make move
@@ -28,7 +28,7 @@ export default class MoveGenerator{
         
         return legalMoves;
     }
-    _generatePseudoLegal(side,board)
+    _generatePseudoLegalMoves(side,board)
     {     
         let moves=[];
         board.forEach(piece=>{
