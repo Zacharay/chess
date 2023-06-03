@@ -82,6 +82,10 @@ export default class Board{
         this.#board[move.from]=this.#board[move.to];
         this.#board[move.to]=prevVal;
     }
+    killPiece(sq)
+    {
+        this.#board[sq]='';
+    }
     getBoard()
     {
         return this.#board;

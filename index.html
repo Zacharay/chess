@@ -5,7 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>Chess</title>
+    <link rel="icon" type="image/x-icon" href="piecesImg/favicon.svg">
+    <link rel="shortcut icon" href="piecesImg/favicon.svg" type="image/x-icon"/>
 </head>
 <body>
     <div class="fen-div">
@@ -16,7 +18,7 @@
     <div class="grid"></div>
     <div class="result-modal hidden">
         <h1>Game Over</h1>
-        <h3>by checkmate</h3>
+        <h3 class="result-h3">by checkmate</h3>
         <div>
             <img src="piecesImg/wK.png" id="modal--white-side"/>
             <img src="piecesImg/bK.png" id="modal--black-side"/>
@@ -24,5 +26,6 @@
         <button class="reset-btn">Play Again</button>
     </div>
     <script src="Game.js" type="module"></script>
+    
 </body>
 </html>

@@ -28,7 +28,6 @@ export default class MoveGenerator{
             //unmake move
             this.#boardObj.unmakeMove(moveToCheck,prevVal);
         })
-        
         return legalMoves;
     }
     _generatePseudoLegalMoves(side,board)

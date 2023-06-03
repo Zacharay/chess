@@ -52,13 +52,13 @@ export default class GUI{
                 return false;
             }
             const pieceColor = piece.getAttribute('data-color');
-            if(pieceColor==this.#playerSide)
-            {
+            //if(pieceColor==this.#playerSide)
+            //{
                 const piecePos = piece.closest(".tile").getAttribute('data-pos');
                 piece.addEventListener('click',()=>{
                     this.selectPiece(piecePos);
                 })
-            }    
+            //}    
         })
     }
     selectPiece(piecePos)
@@ -103,7 +103,7 @@ export default class GUI{
             const audio = new Audio('sounds/captureMove.mp3');
             audio.play();
         }
-        else if(moveType =='normal'){
+        else if(moveType =='normal'||moveType=='possibleEnPassant'){
             const audio = new Audio('sounds/normalMove.mp3');
             audio.play();
         }
@@ -117,8 +117,9 @@ export default class GUI{
         const gameResultModal = document.querySelector(".result-modal");
         const whiteModalImg = document.querySelector("#modal--white-side");
         const blackModalImg = document.querySelector("#modal--black-side");
+        const resultH3 = document.querySelector(".result-h3");
 
-        
+        resultH3.innerHTML = "by checkmate";
         if(gameState=='black')
         {
             blackModalImg.classList.add("winner-img");
@@ -130,6 +131,7 @@ export default class GUI{
             blackModalImg.classList.add("loser-img");
         }
         else{
+            resultH3.innerHTML = "by draw";
             whiteModalImg.classList.add("draw-img");
             blackModalImg.classList.add("draw-img");
         }

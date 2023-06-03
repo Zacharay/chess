@@ -22,6 +22,8 @@ class Piece{
     }
     getMoveType(move,board)
     {
+        if(move.type)return move;
+
         const {from,to} = move;
         let type;
         if(board[to]=='')
@@ -148,7 +150,7 @@ export class King extends Piece{
     }
 }
 export class Pawn extends Piece{
-
+    possibleEnPassant=[];
     #baseMove = -10;
     constructor(white,pos) {
         super(white,pos);
@@ -157,7 +159,9 @@ export class Pawn extends Piece{
     }
     generateMoves(board)
     {
-        this.moveList=[];
+       
+        this.moveList= [...this.possibleEnPassant]
+        this.possibleEnPassant = [];
         const pos120 = SQ64TO120[this.pos];
         const color = this.isWhite?1:-1;
 
@@ -171,7 +175,7 @@ export class Pawn extends Piece{
             const twoSquareMove  = SQ120TO64[pos120+(this.#baseMove*2)*color];
             if(this.isOnStart&&board[twoSquareMove]=='')
             {
-                const move = {from:this.pos,to:twoSquareMove}
+                const move = {from:this.pos,to:twoSquareMove,type:'twoSquarePawnMove'}
                 this.moveList.push(move);
             }
         }
