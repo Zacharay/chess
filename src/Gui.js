@@ -27,6 +27,12 @@ export default class GUI{
                 const boardIdx = rank*8+file
                 let isEmpty;
                 let piece;
+                const selectPromotion = rank==0?`<div class="select-promotion hidden">
+                <button class='btn-promotion' data-type='Queen'></button>
+                <button class='btn-promotion' data-type='Rock'></button>
+                <button class='btn-promotion' data-type='Bishop'></button>
+                <button class='btn-promotion' data-type='Knight'></button>
+            </div>`:'';
                 if(board[boardIdx].symbol)
                 {
                     piece = board[boardIdx];
@@ -37,6 +43,7 @@ export default class GUI{
                 }
                 const tileType = (file+rank)%2==0?'white':'black';
                 html+=`<div class='tile tile-${tileType}' data-pos='${boardIdx}'>
+                ${selectPromotion}
                 ${!isEmpty?`<img src='piecesImg/${piece.symbol}.png' data-color=${piece.isWhite} class='piece'/>`:''}
                 </div>`
             }
@@ -60,6 +67,22 @@ export default class GUI{
                 })
             //}    
         })
+        const promotionBtns = document.querySelectorAll(".btn-promotion");
+        promotionBtns.forEach((btn)=>{
+            const pieceType = btn.getAttribute("data-type");
+            btn.addEventListener('click',()=>{
+                this.promoteTo(pieceType);
+            })
+        })
+    }
+    showPromotionModal(tileIdx)
+    {
+        const tile =document.querySelectorAll('.tile')[tileIdx];
+        tile.firstChild.classList.remove('hidden');
+    }
+    promoteTo(piece)
+    {
+        console.log(piece);
     }
     selectPiece(piecePos)
     {
@@ -103,12 +126,17 @@ export default class GUI{
             const audio = new Audio('sounds/captureMove.mp3');
             audio.play();
         }
-        else if(moveType =='normal'||moveType=='possibleEnPassant'){
+        else if(moveType =='normal'||moveType=='twoSquarePawnMove'){
             const audio = new Audio('sounds/normalMove.mp3');
             audio.play();
         }
         else if(moveType =='castling'){
             const audio = new Audio('sounds/castleMove.mp3');
+            audio.play();
+        }
+        else if(moveType=='promotion')
+        {
+            const audio = new Audio('sounds/promote.mp3');
             audio.play();
         }
     }

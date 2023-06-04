@@ -157,6 +157,32 @@ export class Pawn extends Piece{
         this.symbol +='P';
         this.type = 'Pawn'
     }
+    getMoveType(move,board)
+    {
+        if(move.type)return move;
+
+        const {from,to} = move;
+        let type;
+        if(this._isPromotionMove(to))
+        {
+            type = 'promotion';
+        }
+        else if(board[to]=='')
+        {
+            type = 'normal'
+        }
+        else if(board[to]!='')
+        {
+            type='capture';
+        }
+        return {from,to,type};
+    }
+    _isPromotionMove(to)
+    {
+        if((to <8&&this.isWhite)||(!this.isWhite)&&to<=63&&to>=56)return true;
+           
+        return false;
+    }
     generateMoves(board)
     {
        

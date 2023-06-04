@@ -86,6 +86,10 @@ export default class Board{
     {
         this.#board[sq]='';
     }
+    addNewPiece(pos,piece)
+    {
+        this.#board[pos]=piece;
+    }
     getBoard()
     {
         return this.#board;

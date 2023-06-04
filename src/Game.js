@@ -3,6 +3,8 @@ import Engine from "./Engine.js";
 import GUI from "./Gui.js";
 import MoveGenerator from "./MoveGenerator.js";
 import { SQ120TO64, SQ64TO120 } from "./helpers.js";
+import { Queen } from "./pieces.js";
+import { getHash } from "../Zobrist.js";
 class Game{
     #boardObj;
     #gui;
@@ -20,6 +22,7 @@ class Game{
         this.#moveGenerator= new MoveGenerator(this.#boardObj);
         this.#moves = this.#moveGenerator.getLegalMoves(this.#turn);
         this.#gui = new GUI(this);
+        getHash();
     }
     getBoard()
     {
@@ -37,6 +40,10 @@ class Game{
     }
     makeMove(move)
     {
+        const a = 0x2AF7398005AAA5C;
+        const b = 0x3290AC3A203001BF
+        console.log(a^b);
+        console.log(move);
         if(move.type=='castling')
         {
             const kingPos = move.from;
@@ -50,6 +57,14 @@ class Game{
         else if(move?.enPassantPiece)
         {
             this.#boardObj.killPiece(move.enPassantPiece);
+        }
+        else if(move.type=='promotion')
+        {
+            console.log('test')
+            this.#boardObj.killPiece(move.from);
+            const piece = new Queen(this.#turn,move.from);
+            console.log(piece);
+            this.#boardObj.addNewPiece(move.from,piece);
         }
         
         this.#boardObj.makeMove(move);
