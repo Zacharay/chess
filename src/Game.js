@@ -4,7 +4,7 @@ import GUI from "./Gui.js";
 import MoveGenerator from "./MoveGenerator.js";
 import { SQ120TO64, SQ64TO120 } from "./helpers.js";
 import { Queen } from "./pieces.js";
-import { getHash } from "../Zobrist.js";
+import {  getHashKey } from "./OpeningBook/Zobrist.js";
 class Game{
     #boardObj;
     #gui;
@@ -22,7 +22,7 @@ class Game{
         this.#moveGenerator= new MoveGenerator(this.#boardObj);
         this.#moves = this.#moveGenerator.getLegalMoves(this.#turn);
         this.#gui = new GUI(this);
-        getHash();
+        getHashKey(this.#boardObj.getBoard(),"KQkq","-",1);
     }
     getBoard()
     {
