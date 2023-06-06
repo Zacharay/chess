@@ -24,7 +24,7 @@ class Piece{
     {
         if(move.type)return move;
 
-        const {from,to} = move;
+        const {to} = move;
         let type;
         if(board[to]=='')
         {
@@ -34,7 +34,7 @@ class Piece{
         {
             type='capture';
         }
-        return {from,to,type};
+        return {type,...move};
     }
     generateMoves(board)
     {
@@ -45,13 +45,13 @@ class Piece{
                 let newPos120 = SQ64TO120[this.pos] + offset;
                 while(SQ120TO64[newPos120]!=-1&&board[SQ120TO64[newPos120]].isWhite!=this.isWhite)
                 {
-                    const move = {from:this.pos,to:SQ120TO64[newPos120]}
+                    const move = {from:this.pos,to:SQ120TO64[newPos120],piece:this.type}
 
                     this.moveList.push(move);
 
                     //break loop after finding first opponent piece 
                     if(board[SQ120TO64[newPos120]]!='')break;
-
+                   
                     newPos120+=offset;
                 }
             })
@@ -63,7 +63,7 @@ class Piece{
                 const newPos64 = SQ120TO64[newPos];
                 if(SQ120TO64[newPos]==-1||board[newPos64].isWhite==this.isWhite)return;
 
-                const move = {from:this.pos,to:newPos64}
+                const move = {from:this.pos,to:newPos64,piece:this.type}
                 
                 this.moveList.push(move);
             })
@@ -127,7 +127,7 @@ export class King extends Piece{
 
             if(canCastleQueenside)
             {
-                const castleMove = {from:this.pos,to:this.pos-2,type:'castling',side:'Queen'}
+                const castleMove = {from:this.pos,to:this.pos-2,type:'castling',castlingSide:'Queen'}
                 castlingMoves.push(castleMove);
             }
             const isKingSideEmpty = board[this.pos+1]==''&&board[this.pos+2]=='';
@@ -136,7 +136,7 @@ export class King extends Piece{
             const canCastleKingside = isKingSideEmpty&&!hasRightRockMoved&&!rightSquaresAttacked
             if(canCastleKingside)
             {
-                const castleMove = {from:this.pos,to:this.pos+2,type:'castling',side:'King'}
+                const castleMove = {from:this.pos,to:this.pos+2,type:'castling',castlingSide:'King'}
                 castlingMoves.push(castleMove);
             }
             return castlingMoves;
@@ -159,7 +159,7 @@ export class Pawn extends Piece{
     }
     getMoveType(move,board)
     {
-        if(move.type)return move;
+        if(move.type)return {...move,piece:'Pawn'};
 
         const {from,to} = move;
         let type;
@@ -175,7 +175,7 @@ export class Pawn extends Piece{
         {
             type='capture';
         }
-        return {from,to,type};
+        return {from,to,type,piece:'Pawn'};
     }
     _isPromotionMove(to)
     {

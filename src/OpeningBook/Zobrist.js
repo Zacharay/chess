@@ -1,7 +1,7 @@
 import { RandomNumbers } from "./RandomNumbers.js";
 
 
-export function getHashKey(board,castlePerms,enPassantMove,turn)
+export function getHashKey(board,castlePerms,enPassantMove)
 {
     //key=piece^castle^enPassant^turn
     
@@ -35,9 +35,10 @@ export function getHashKey(board,castlePerms,enPassantMove,turn)
       enPassant = RandomNumbers[baseEnOffset+getFileValue(enPassantMove[0])];
     }
     
-
+    const turn = board.side;
     const turnKey = turn==1?RandomNumbers[780]:0;
-    const key = pieceKey^castle^enPassant^turnKey
+    const key = pieceKey^castle^enPassant^turnKey;
+    return key;
 }
 function getFileValue(file)
 {

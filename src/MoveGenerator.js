@@ -5,8 +5,9 @@ export default class MoveGenerator{
     constructor(board){
         this.#boardObj = board;
     }
-    getLegalMoves(side)
+    getLegalMoves()
     {
+        const side = this.#boardObj.side; 
         const legalMoves = [];
         const board = this.#boardObj.getBoard();
         const pseudoLegalMoves = this._generatePseudoLegalMoves(side,board);

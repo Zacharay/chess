@@ -1,7 +1,8 @@
 import { Bishop, King, Knight, Pawn, Queen ,Rock} from "./pieces.js";
-
+import { SQ120TO64, SQ64TO120 } from "./helpers.js";
 export default class Board{
     #board = Array(64).fill('');
+    side=1;
     #kings=[];//0 black king 1 white king 
     constructor(fenNotation = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     {
@@ -63,7 +64,7 @@ export default class Board{
 
     }
     makeMove(move,trueMove=true)
-    {
+    {      
         if(trueMove)this.#board[move.from].isOnStart = false;
          
         this.#board[move.from].movePiece(move.to);
@@ -73,6 +74,31 @@ export default class Board{
         this.#board[move.to]=this.#board[move.from];
         this.#board[move.from]='';
         return  pieceOnCapturedSquare;
+    }
+    handleMove(move)
+    {   
+        if(move.type=='castling')
+        {
+            const kingPos = move.from;
+            if(move.castlingSide=='King')this.makeMove({from:kingPos+3,to:kingPos+1});
+            else this.makeMove({from:kingPos-4,to:kingPos-1});
+        }
+        else if(move.type=='twoSquarePawnMove')
+        {
+            this._addPossibleEnPassants(move);
+        }
+        else if(move?.enPassantPiece)
+        {
+            this.#board[move.enPassantPiece] = '';
+        }
+        else if(move.type=='promotion')
+        {
+            this.#board[move.from] = '';
+            const piece = new Queen(this.side,move.from);
+            this.#board[move.from] = piece;
+        }
+        this.makeMove(move);
+        this.changeSide();
     }
     unmakeMove(move,prevVal)
     {
@@ -86,6 +112,29 @@ export default class Board{
     {
         this.#board[sq]='';
     }
+    _addPossibleEnPassants(move)
+    {
+        const board = this.getBoard();
+        const leftNbrPos120 = SQ64TO120[move.to]-1;
+        const rightNbrPos120 = SQ64TO120[move.to]+1;
+
+        const leftNbrPos64 = SQ120TO64[leftNbrPos120];
+        const rightNbrPos64 = SQ120TO64[rightNbrPos120];
+
+        const color = board[move.from].isWhite?-1:1;
+        if(leftNbrPos64!=-1&&board[leftNbrPos64]?.type=='Pawn'&&board[move.from].isWhite!=board[leftNbrPos64].isWhite)
+        {
+            const newMove = {from:leftNbrPos64,to:move.from+8*color,type:'capture',enPassantPiece:move.to}
+            board[leftNbrPos64].possibleEnPassant.push(newMove);  
+        }
+
+        if(rightNbrPos64!=-1&&board[rightNbrPos64]?.type=='Pawn'&&board[move.from].isWhite!=board[rightNbrPos64].isWhite)
+        {
+            const newMove = {from:rightNbrPos64,to:move.from+8*color,type:'capture',enPassantPiece:move.to}
+            board[rightNbrPos64].possibleEnPassant.push(newMove);    
+        }
+
+    }
     addNewPiece(pos,piece)
     {
         this.#board[pos]=piece;
@@ -98,8 +147,23 @@ export default class Board{
     {
         return this.#kings[side].pos;
     }
-
-
-
-
+    changeSide()
+    {
+        this.side = this.side==1?0:1;
+    }
+    printBoard()
+    {
+        for(let i=0;i<8;i++)
+        {
+            let temp = [];
+            for(let j = 0;j<8;j++)
+            {
+                const sq = i*8+j;
+                const piece = this.#board[sq];
+                if(piece=='')temp.push('--');
+                else temp.push(this.#board[sq].symbol);
+            }
+            console.log(temp)
+        }
+    }
 }
