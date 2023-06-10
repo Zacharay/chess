@@ -1,5 +1,6 @@
 import { Bishop, King, Knight, Pawn, Queen ,Rock} from "./pieces.js";
 import { SQ120TO64, SQ64TO120 } from "./helpers.js";
+import { getHashKey } from "./OpeningBook/Zobrist.js";
 export default class Board{
     #board = Array(64).fill('');
     side=1;
@@ -64,9 +65,12 @@ export default class Board{
 
     }
     makeMove(move,trueMove=true)
-    {      
+    {   
+        //fix this , when generating moves by engine   
         if(trueMove)this.#board[move.from].isOnStart = false;
-         
+        
+        //console.log("------------------");
+        //this.printBoard();
         this.#board[move.from].movePiece(move.to);
 
         const pieceOnCapturedSquare =this.#board[move.to];
@@ -75,7 +79,7 @@ export default class Board{
         this.#board[move.from]='';
         return  pieceOnCapturedSquare;
     }
-    handleMove(move)
+    handleMove(move,trueMove=true)
     {   
         if(move.type=='castling')
         {
@@ -97,16 +101,39 @@ export default class Board{
             const piece = new Queen(this.side,move.from);
             this.#board[move.from] = piece;
         }
-        this.makeMove(move);
+        const prevVal = this.makeMove(move,trueMove);
         this.changeSide();
+        return prevVal;
+    }
+    setBoard(board)
+    {
+        const newBoard = board.slice();
+        this.#board = newBoard;
     }
     unmakeMove(move,prevVal)
     {
+        if(move.type=='castling')
+        {
+            const kingPos = move.from;
+            if(move.castlingSide=='King')this.makeMove({from:kingPos+1,to:kingPos+3});
+            else this.makeMove({from:kingPos-1,to:kingPos-4});
+        }
+        else if(move?.enPassantPiece)
+        {
+            this.#board[move.enPassantPiece] = new Pawn(!this.side,move.enPassantPiece,false);
+        }
+        else if(move.type=='promotion')
+        {
+            this.#board[move.to] = '';
+            const piece = new Pawn(this.side,move.to);
+            this.#board[move.to] = piece;
+        }
         
         this.#board[move.to].movePiece(move.from); 
 
         this.#board[move.from]=this.#board[move.to];
         this.#board[move.to]=prevVal;
+        this.changeSide();
     }
     killPiece(sq)
     {
@@ -165,5 +192,9 @@ export default class Board{
             }
             console.log(temp)
         }
+    }
+    getBoardHashKey()
+    {
+        return getHashKey(this,'KQkq','-');
     }
 }

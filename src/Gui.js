@@ -59,13 +59,13 @@ export default class GUI{
                 return false;
             }
             const pieceColor = piece.getAttribute('data-color');
-            //if(pieceColor==this.#playerSide)
-            //{
+            if(pieceColor==this.#playerSide)
+            {
                 const piecePos = piece.closest(".tile").getAttribute('data-pos');
                 piece.addEventListener('click',()=>{
                     this.selectPiece(piecePos);
                 })
-            //}    
+            }    
         })
         const promotionBtns = document.querySelectorAll(".btn-promotion");
         promotionBtns.forEach((btn)=>{

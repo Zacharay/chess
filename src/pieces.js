@@ -152,8 +152,10 @@ export class King extends Piece{
 export class Pawn extends Piece{
     possibleEnPassant=[];
     #baseMove = -10;
-    constructor(white,pos) {
+    
+    constructor(white,pos,isOnStart=true) {
         super(white,pos);
+        //this.isOnStart= isOnStart;
         this.symbol +='P';
         this.type = 'Pawn'
     }

@@ -7,7 +7,7 @@ import {  getHashKey } from "./OpeningBook/Zobrist.js";
 class Game{
     #boardObj;
     #gui;
-    aiSide = 1;
+    aiSide = 0;
     playerSide = 1;
     #moveGenerator; 
     #moves;
@@ -15,8 +15,9 @@ class Game{
     #gameState='active'
     constructor()
     {
-        this.#engine = new Engine();
+        
         this.#boardObj= new Board();
+        this.#engine = new Engine(this.#boardObj);
         this.#moveGenerator= new MoveGenerator(this.#boardObj);
         this.#moves = this.#moveGenerator.getLegalMoves(this.#boardObj.side);
         
@@ -32,9 +33,9 @@ class Game{
         this.makeMove(playerMove)
 
         //black
-        // const engineMove = this.#engine.findNextMove(this.#moves);
-        // if(!engineMove)return;
-        // this.makeMove(engineMove); 
+        const engineMove = this.#engine.findNextMove(this.#moves);
+        if(!engineMove)return;
+        this.makeMove(engineMove); 
     }
     makeMove(move)
     {
@@ -44,7 +45,6 @@ class Game{
         this.#moves = this.#moveGenerator.getLegalMoves(this.#boardObj.side);
         this.#gui.renderBoard();
         
-        console.log(getHashKey(this.#boardObj.getBoard(),"KQkq","-"));
         this.#gui.soundHandler(move.type);
         if(this._isGameOver(this.#boardObj.side,this.#moves))return
     }
@@ -55,7 +55,6 @@ class Game{
     }
     getPieceMoves(piecePos,side)
     {
-        //return this.#moves.filter((pos)=>pos.from==piecePos&&side==this.#turn);
         return this.#moves.filter((pos)=>pos.from==piecePos);
     }
     _isGameOver(side,moves)
