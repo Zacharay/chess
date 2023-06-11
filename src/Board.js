@@ -64,24 +64,23 @@ export default class Board{
         }
 
     }
-    makeMove(move,trueMove=true)
+    makeMove(move)
     {   
-        //fix this , when generating moves by engine   
-        if(trueMove)this.#board[move.from].numOfMovesMade++;
         
-        //console.log("------------------");
-        //this.printBoard();
+        this.#board[move.from].numOfMovesMade++;
+        console.log(this.#board);
         this.#board[move.from].movePiece(move.to);
 
         const pieceOnCapturedSquare =this.#board[move.to];
         
         this.#board[move.to]=this.#board[move.from];
         this.#board[move.from]='';
-        this.changeSide();
+
         return  pieceOnCapturedSquare;
     }
     handleMove(move,trueMove=true)
     {   
+        
         if(move.type=='castling')
         {
             const kingPos = move.from;
@@ -103,7 +102,7 @@ export default class Board{
             this.#board[move.from] = piece;
         }
         const prevVal = this.makeMove(move,trueMove);
-
+        this.changeSide();
         return prevVal;
     }
     setBoard(board)
@@ -111,10 +110,10 @@ export default class Board{
         const newBoard = board.slice();
         this.#board = newBoard;
     }
-    unmakeMove(move,prevVal,trueMove=true)
+    unmakeMove(move,prevVal)
     {
 
-        if(trueMove)this.#board[move.to].numOfMovesMade--;
+        this.#board[move.to].numOfMovesMade--;
 
         if(move.type=='castling')
         {
@@ -124,6 +123,7 @@ export default class Board{
         }
         else if(move?.enPassantPiece)
         {
+            console.log('test')
             this.#board[move.enPassantPiece] = new Pawn(!this.side,move.enPassantPiece,false);
         }
         else if(move.type=='promotion')

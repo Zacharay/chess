@@ -19,17 +19,16 @@ export default class MoveGenerator{
                 return;
             }
             //make move
-            const prevVal = this.#boardObj.handleMove(moveToCheck,false);
+            const prevVal = this.makeMove(moveToCheck,board);
 
-            const newBoard = this.#boardObj.getBoard();
             const kingPos = this.#boardObj.getKingPos(side);
             //check if legal
-            if(!this.isSquareAttacked(kingPos,!side,newBoard))
+            if(!this.isSquareAttacked(kingPos,!side,board))
             {
                 legalMoves.push(moveToCheck);
             }
             //unmake move
-            this.#boardObj.unmakeMove(moveToCheck,prevVal,false);
+            this.unmakeMove(moveToCheck,prevVal,board);
         })
         
         return legalMoves;
@@ -148,5 +147,23 @@ export default class MoveGenerator{
 
         }
         return false;
+    }
+    makeMove(move,board){
+
+        board[move.from].movePiece(move.to);
+
+        const pieceOnCapturedSquare =board[move.to];
+        
+        board[move.to]=board[move.from];
+        board[move.from]='';
+
+        return  pieceOnCapturedSquare;
+    }
+    unmakeMove(move,prevVal,board)
+    {    
+        board[move.to].movePiece(move.from); 
+
+        board[move.from]=board[move.to];
+        board[move.to]=prevVal;
     }
 }

@@ -118,7 +118,7 @@ export class King extends Piece{
             let castlingMoves=[];
 
             const isQueenSideEmpty = board[this.pos-1]==''&&board[this.pos-2]==''&&board[this.pos-3]=='';
-            const hasLeftRockMoved = board[this.pos-4].type=='Rock'&&board[this.pos-4].isOnStart == true;
+            const hasLeftRockMoved = board[this.pos-4].type=='Rock'&&board[this.pos-4].numOfMovesMade != 0;
             const leftSquaresAttacked = 
             isSquareAttacked(this.pos-1,!this.isWhite,board)|| 
             isSquareAttacked(this.pos-2,!this.isWhite,board)|| 
@@ -131,11 +131,16 @@ export class King extends Piece{
                 castlingMoves.push(castleMove);
             }
             const isKingSideEmpty = board[this.pos+1]==''&&board[this.pos+2]=='';
-            const hasRightRockMoved = board[this.pos+3].type=='Rock'&&board[this.pos+3].isOnStart == true;
+            console.log(board,this.pos,board[this.pos+3].numOfMovesMade,board[this.pos+3].type=='Rook')
+            const hasRightRockMoved = board[this.pos+3].type=='Rook'&&board[this.pos+3].numOfMovesMade == 0;
             const rightSquaresAttacked = isSquareAttacked(this.pos+1,!this.isWhite,board)|| isSquareAttacked(this.pos+2,!this.isWhite,board);
-            const canCastleKingside = isKingSideEmpty&&!hasRightRockMoved&&!rightSquaresAttacked
+            
+            const canCastleKingside = isKingSideEmpty&&hasRightRockMoved&&!rightSquaresAttacked
+           
             if(canCastleKingside)
             {
+                
+                
                 const castleMove = {from:this.pos,to:this.pos+2,type:'castling',castlingSide:'King'}
                 castlingMoves.push(castleMove);
             }
