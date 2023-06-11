@@ -67,7 +67,7 @@ export default class Board{
     makeMove(move,trueMove=true)
     {   
         //fix this , when generating moves by engine   
-        if(trueMove)this.#board[move.from].isOnStart = false;
+        if(trueMove)this.#board[move.from].numOfMovesMade++;
         
         //console.log("------------------");
         //this.printBoard();
@@ -77,6 +77,7 @@ export default class Board{
         
         this.#board[move.to]=this.#board[move.from];
         this.#board[move.from]='';
+        this.changeSide();
         return  pieceOnCapturedSquare;
     }
     handleMove(move,trueMove=true)
@@ -102,7 +103,7 @@ export default class Board{
             this.#board[move.from] = piece;
         }
         const prevVal = this.makeMove(move,trueMove);
-        this.changeSide();
+
         return prevVal;
     }
     setBoard(board)
@@ -110,8 +111,11 @@ export default class Board{
         const newBoard = board.slice();
         this.#board = newBoard;
     }
-    unmakeMove(move,prevVal)
+    unmakeMove(move,prevVal,trueMove=true)
     {
+
+        if(trueMove)this.#board[move.to].numOfMovesMade--;
+
         if(move.type=='castling')
         {
             const kingPos = move.from;
@@ -151,12 +155,14 @@ export default class Board{
         const color = board[move.from].isWhite?-1:1;
         if(leftNbrPos64!=-1&&board[leftNbrPos64]?.type=='Pawn'&&board[move.from].isWhite!=board[leftNbrPos64].isWhite)
         {
+   
             const newMove = {from:leftNbrPos64,to:move.from+8*color,type:'capture',enPassantPiece:move.to}
             board[leftNbrPos64].possibleEnPassant.push(newMove);  
         }
 
         if(rightNbrPos64!=-1&&board[rightNbrPos64]?.type=='Pawn'&&board[move.from].isWhite!=board[rightNbrPos64].isWhite)
         {
+           
             const newMove = {from:rightNbrPos64,to:move.from+8*color,type:'capture',enPassantPiece:move.to}
             board[rightNbrPos64].possibleEnPassant.push(newMove);    
         }

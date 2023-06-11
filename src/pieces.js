@@ -7,7 +7,7 @@ class Piece{
     type;
     #isSlidingPiece
     #offsets;
-    isOnStart=true;
+    numOfMovesMade=0;
     constructor(isWhite,pos,isSlidingPiece,offsets)
     {
         this.isWhite =isWhite;
@@ -113,7 +113,7 @@ export class King extends Piece{
     {
         const checkCastlingMoves = ()=>{
             const isInCheck = isSquareAttacked(this.pos,!this.isWhite,board)
-            if(isInCheck||!this.isOnStart)return;
+            if(isInCheck||this.numOfMovesMade!=0)return;
 
             let castlingMoves=[];
 
@@ -153,9 +153,8 @@ export class Pawn extends Piece{
     possibleEnPassant=[];
     #baseMove = -10;
     
-    constructor(white,pos,isOnStart=true) {
+    constructor(white,pos) {
         super(white,pos);
-        //this.isOnStart= isOnStart;
         this.symbol +='P';
         this.type = 'Pawn'
     }
@@ -187,8 +186,14 @@ export class Pawn extends Piece{
     }
     generateMoves(board)
     {
-       
         this.moveList= [...this.possibleEnPassant]
+        // this.possibleEnPassant.forEach((move)=>{
+            
+        //     if(move.from==this.pos){
+        //         this.moveList.push(move);
+        //     }
+        // })
+        
         this.possibleEnPassant = [];
         const pos120 = SQ64TO120[this.pos];
         const color = this.isWhite?1:-1;
@@ -201,7 +206,7 @@ export class Pawn extends Piece{
             this.moveList.push(move);
 
             const twoSquareMove  = SQ120TO64[pos120+(this.#baseMove*2)*color];
-            if(this.isOnStart&&board[twoSquareMove]=='')
+            if(this.numOfMovesMade==0&&board[twoSquareMove]=='')
             {
                 const move = {from:this.pos,to:twoSquareMove,type:'twoSquarePawnMove'}
                 this.moveList.push(move);

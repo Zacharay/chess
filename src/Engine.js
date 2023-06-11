@@ -27,7 +27,7 @@ export default class Engine{
         }
         else 
         {
-            console.log(this._searchPositions(3));
+            //console.log(this._searchPositions(3));
             const move = legalMoves[Math.floor(Math.random()*legalMoves.length)];
         
             return move;
@@ -71,14 +71,15 @@ export default class Engine{
         {
             return 1;
         }
+        
         const moveGen = new MoveGenerator(this.#boardObj);
-        const moves = moveGen.getLegalMoves(this.#boardObj.side);
-        console.log(moves)
+        const moves = moveGen.getLegalMoves();
+        
         moves.forEach(move=>{
             
-            console.log(move,this.#boardObj.side,depth,this);
-            const prevVal = this.#boardObj.handleMove(move,false);
-            this.#boardObj.printBoard();
+            
+            const prevVal = this.#boardObj.handleMove(move);
+           
             const moveScore = this.negaMax(depth-1);
 
 

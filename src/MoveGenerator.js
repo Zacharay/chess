@@ -8,8 +8,10 @@ export default class MoveGenerator{
     getLegalMoves()
     {
         const side = this.#boardObj.side; 
+        
         const legalMoves = [];
         const board = this.#boardObj.getBoard();
+
         const pseudoLegalMoves = this._generatePseudoLegalMoves(side,board);
         pseudoLegalMoves.forEach((moveToCheck)=>{
             if(moveToCheck.type=='castling'){
@@ -17,7 +19,7 @@ export default class MoveGenerator{
                 return;
             }
             //make move
-            const prevVal = this.#boardObj.makeMove(moveToCheck,false);
+            const prevVal = this.#boardObj.handleMove(moveToCheck,false);
 
             const newBoard = this.#boardObj.getBoard();
             const kingPos = this.#boardObj.getKingPos(side);
@@ -27,8 +29,9 @@ export default class MoveGenerator{
                 legalMoves.push(moveToCheck);
             }
             //unmake move
-            this.#boardObj.unmakeMove(moveToCheck,prevVal);
+            this.#boardObj.unmakeMove(moveToCheck,prevVal,false);
         })
+        
         return legalMoves;
     }
     _generatePseudoLegalMoves(side,board)
