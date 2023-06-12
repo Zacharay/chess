@@ -1,6 +1,6 @@
-import Board from '../Board.js';
-import {sqToFile,sqToRank,fileRankToSq,getAllRankFileSquares} from '../helpers.js';
-import MoveGenerator from '../MoveGenerator.js';
+import Board from '../../Board.js';
+import {sqToFile,sqToRank,fileRankToSq,getAllRankFileSquares} from '../../helpers.js';
+import MoveGenerator from '../../MoveGenerator.js';
 import {getHashKey} from "./Zobrist.js"
 fetch('src/OpeningBook/Games.txt')
   .then(response => response.text())

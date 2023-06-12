@@ -1,9 +1,9 @@
 import Board from "./Board.js";
-import Engine from "./Engine.js";
+import Engine from "./AI/Engine.js";
 import GUI from "./Gui.js";
 import MoveGenerator from "./MoveGenerator.js";
 import { Queen } from "./pieces.js";
-import {  getHashKey } from "./OpeningBook/Zobrist.js";
+import {  getHashKey } from "./AI/OpeningBook/Zobrist.js";
 class Game{
     #boardObj;
     #gui;
@@ -13,6 +13,7 @@ class Game{
     #moves;
     #engine;
     #gameState='active'
+    boardObj
     constructor()
     {
         
@@ -31,7 +32,7 @@ class Game{
     {
         //white 
         this.makeMove(playerMove)
-
+        
         //black
         const engineMove = this.#engine.findNextMove(this.#moves);
         if(!engineMove)return;

@@ -1,8 +1,9 @@
-import MoveGenerator from "./MoveGenerator.js";
-
+import MoveGenerator from "../MoveGenerator.js";
+import EvaluateFromSide from "./Evaluate.js";
 export default class Engine{
     #openingBook;
     #boardObj
+    #test=0;
     constructor(boardObj)
     {
         this.#boardObj = boardObj;
@@ -27,8 +28,8 @@ export default class Engine{
         }
         else 
         {
-            //console.log(this._searchPositions(3));
-            const move = legalMoves[Math.floor(Math.random()*legalMoves.length)];
+            const move = this._searchPositions(legalMoves,3)
+            //const move = legalMoves[Math.floor(Math.random()*legalMoves.length)];
         
             return move;
         }
@@ -36,7 +37,7 @@ export default class Engine{
     }
     async getOpeningBook()
     {
-        return fetch('src/OpeningBook/Book.json')
+        return fetch('src/AI/OpeningBook/Book.json')
         .then(response => response.json())
         .then(data => {
             const myMap = new Map(Object.entries(data));
@@ -59,28 +60,44 @@ export default class Engine{
             return bookMove;
         }
     }
-    _searchPositions(maxDepth)
+    _searchPositions(moves,maxDepth)
     {
+        let bestScore= -Infinity;
+        let bestMove;
+        moves.forEach(move=>{
+            const prevVal = this.#boardObj.handleMove(move);
+           
+            const moveScore = -this.negaMax(maxDepth-1);
 
-        return this.negaMax(maxDepth);
+            this.#boardObj.unmakeMove(move,prevVal);
+
+            if(moveScore>bestScore)
+            {
+                bestScore = moveScore;
+                bestMove = move;
+            }
+        })
+        return bestMove;
     }
     negaMax(depth)
     {
         let bestScore = -Infinity;
         if(depth==0)
         {
-            return 1;
+            const board = this.#boardObj.getBoard();
+            const side = this.#boardObj.side;
+          
+            return EvaluateFromSide(board,side);
         }
         
         const moveGen = new MoveGenerator(this.#boardObj);
         const moves = moveGen.getLegalMoves();
-        
         moves.forEach(move=>{
             
-            
+            //console.log(moves,move)
             const prevVal = this.#boardObj.handleMove(move);
            
-            const moveScore = this.negaMax(depth-1);
+            const moveScore = -this.negaMax(depth-1);
 
 
             this.#boardObj.unmakeMove(move,prevVal);

@@ -1,6 +1,6 @@
 import { Bishop, King, Knight, Pawn, Queen ,Rock} from "./pieces.js";
 import { SQ120TO64, SQ64TO120 } from "./helpers.js";
-import { getHashKey } from "./OpeningBook/Zobrist.js";
+import { getHashKey } from "./AI/OpeningBook/Zobrist.js";
 export default class Board{
     #board = Array(64).fill('');
     side=1;
@@ -66,9 +66,7 @@ export default class Board{
     }
     makeMove(move)
     {   
-        
         this.#board[move.from].numOfMovesMade++;
-        console.log(this.#board);
         this.#board[move.from].movePiece(move.to);
 
         const pieceOnCapturedSquare =this.#board[move.to];
@@ -87,14 +85,14 @@ export default class Board{
             if(move.castlingSide=='King')this.makeMove({from:kingPos+3,to:kingPos+1});
             else this.makeMove({from:kingPos-4,to:kingPos-1});
         }
-        else if(move.type=='twoSquarePawnMove')
-        {
-            this._addPossibleEnPassants(move);
-        }
-        else if(move?.enPassantPiece)
-        {
-            this.#board[move.enPassantPiece] = '';
-        }
+        // else if(move.type=='twoSquarePawnMove')
+        // {
+        //     this._addPossibleEnPassants(move);
+        // }
+        // else if(move?.enPassantPiece)
+        // {
+        //     this.#board[move.enPassantPiece] = '';
+        // }
         else if(move.type=='promotion')
         {
             this.#board[move.from] = '';
@@ -118,19 +116,37 @@ export default class Board{
         if(move.type=='castling')
         {
             const kingPos = move.from;
-            if(move.castlingSide=='King')this.makeMove({from:kingPos+1,to:kingPos+3});
-            else this.makeMove({from:kingPos-1,to:kingPos-4});
+        
+            if(move.castlingSide=='King'){
+                
+                const from = kingPos+1;
+                const to = kingPos+3;
+                this.#board[to]= this.#board[from];
+                this.#board[from].movePiece(to); 
+                this.#board[to].numOfMovesMade--;
+                this.#board[from]='';
+            }
+            else {
+                const from  = kingPos-1;
+                const to = kingPos-4;
+                this.#board[to]= this.#board[from];
+                this.#board[from].movePiece(to); 
+                this.#board[to].numOfMovesMade--;
+                this.#board[from]='';
+            };
         }
-        else if(move?.enPassantPiece)
-        {
-            console.log('test')
-            this.#board[move.enPassantPiece] = new Pawn(!this.side,move.enPassantPiece,false);
-        }
+        // else if(move?.enPassantPiece)
+        // {
+           
+        //     this.#board[move.enPassantPiece] = new Pawn(!this.side,move.enPassantPiece,false);
+        // }
         else if(move.type=='promotion')
         {
             this.#board[move.to] = '';
-            const piece = new Pawn(this.side,move.to);
+            const color = this.side ==0?1:0;
+            const piece = new Pawn(color,move.to);
             this.#board[move.to] = piece;
+            
         }
         
         this.#board[move.to].movePiece(move.from); 
