@@ -28,7 +28,7 @@ export default class Engine{
         }
         else 
         {
-            const move = this._searchPositions(legalMoves,3)
+            const move = this._searchPositions(legalMoves,4)
             //const move = legalMoves[Math.floor(Math.random()*legalMoves.length)];
         
             return move;
@@ -67,8 +67,7 @@ export default class Engine{
         moves.forEach(move=>{
             const prevVal = this.#boardObj.handleMove(move);
            
-            const moveScore = -this.negaMax(maxDepth-1);
-
+            const moveScore = -this.negaMax(maxDepth-1,-Infinity,Infinity);
             this.#boardObj.unmakeMove(move,prevVal);
 
             if(moveScore>bestScore)
@@ -77,37 +76,86 @@ export default class Engine{
                 bestMove = move;
             }
         })
+        console.log(this.#test);
         return bestMove;
     }
-    negaMax(depth)
+    negaMax(depth,alpha,beta)
     {
-        let bestScore = -Infinity;
         if(depth==0)
         {
-            const board = this.#boardObj.getBoard();
-            const side = this.#boardObj.side;
-          
-            return EvaluateFromSide(board,side);
+            this.#test++;
+            return EvaluateFromSide(this.#boardObj);
         }
         
         const moveGen = new MoveGenerator(this.#boardObj);
         const moves = moveGen.getLegalMoves();
-        moves.forEach(move=>{
-            
+        for(let i=0;i<moves.length;i++)
+        {
+            const move = moves[i];
             //console.log(moves,move)
             const prevVal = this.#boardObj.handleMove(move);
            
-            const moveScore = -this.negaMax(depth-1);
+            const moveScore = -this.negaMax(depth-1,-beta,-alpha);
+
+            this.#boardObj.unmakeMove(move,prevVal);
+            if(moveScore>=beta)
+            {
+                return beta;
+            }
+            if(moveScore>alpha)
+            {
+                alpha = moveScore;
+            }
+        }
+        return alpha;
+    }
+    alphaBetaMax(alpha,beta,depthLeft)
+    {
+        if(depthLeft==0)
+        {
+            this.#test++;
+            return EvaluateFromSide(this.#boardObj);
+        }
+        const moveGen = new MoveGenerator(this.#boardObj);
+        const moves = moveGen.getLegalMoves();
+        for(let i=0;i<moves.length;i++)
+        {
+            const move = moves[i];
+            const prevVal = this.#boardObj.handleMove(move);
+           
+            const moveScore = this.alphaBetaMin(alpha,beta,depthLeft-1);
 
 
             this.#boardObj.unmakeMove(move,prevVal);
-            //console.log(this.#boardObj.getBoard());
-            if(moveScore>bestScore)
-            {
-                bestScore = moveScore;
-            }
-        })
-        return bestScore;
+            
+            if(moveScore>=beta)return beta;
+            if (moveScore>alpha)alpha = moveScore;
+        }
+        return alpha;
+    }
+    alphaBetaMin(alpha,beta,depthLeft)
+    {
+        if(depthLeft==0)
+        {
+            this.#test++;
+            return EvaluateFromSide(this.#boardObj);
+        }
+        const moveGen = new MoveGenerator(this.#boardObj);
+        const moves = moveGen.getLegalMoves();
+        for(let i=0;i<moves.length;i++)
+        {
+            const move = moves[i];
+            //console.log(moves,move)
+            const prevVal = this.#boardObj.handleMove(move);
+           
+            const moveScore = this.alphaBetaMax(alpha,beta,depthLeft-1);
 
+
+            this.#boardObj.unmakeMove(move,prevVal);
+            
+            if(moveScore<=alpha)return alpha;
+            if (moveScore<beta)beta = moveScore;
+        }
+        return beta;
     }
 }

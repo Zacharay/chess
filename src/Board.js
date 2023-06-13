@@ -1,4 +1,4 @@
-import { Bishop, King, Knight, Pawn, Queen ,Rock} from "./pieces.js";
+import { Bishop, King, Knight, Pawn, Queen ,Rook} from "./pieces.js";
 import { SQ120TO64, SQ64TO120 } from "./helpers.js";
 import { getHashKey } from "./AI/OpeningBook/Zobrist.js";
 export default class Board{
@@ -28,7 +28,29 @@ export default class Board{
                 curSq++;
             }
         }  
+        const side = parts[1];
+        this.side = side=='w'?1:0;
+        this._setCastlingRights(parts[2]);
 
+    }
+    _setCastlingRights(rights)
+    {
+
+            for(let i=0;i<rights.length;i++)
+            {
+                if(rights[i]=='K'){
+                    this.#board[63].numOfMovesMade=0;
+                }
+                else if(rights[i]=='Q'){
+                    this.#board[56].numOfMovesMade=0;
+                }
+                else if(rights[i]=='k'){
+                    this.#board[7].numOfMovesMade=0;
+                }
+                else if(rights[i]=='q'){
+                    this.#board[0].numOfMovesMade=0;
+                }
+            }
 
     }
     _getPieceBySymbol(symbol,pos)
@@ -41,7 +63,7 @@ export default class Board{
         }
         else if(symbol=='r')
         {
-            return new Rock(color,pos)
+            return new Rook(color,pos)
         }
         else if(symbol=='q')
         {

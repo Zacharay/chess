@@ -2,8 +2,7 @@ import Board from "./Board.js";
 import Engine from "./AI/Engine.js";
 import GUI from "./Gui.js";
 import MoveGenerator from "./MoveGenerator.js";
-import { Queen } from "./pieces.js";
-import {  getHashKey } from "./AI/OpeningBook/Zobrist.js";
+import { isSquareAttacked } from "./helpers.js";
 class Game{
     #boardObj;
     #gui;
@@ -64,7 +63,7 @@ class Game{
 
         const kingPos = this.#boardObj.getKingPos(side);
         const winner = side==1?'black':'white';
-        if(this.#moveGenerator.isSquareAttacked(kingPos,!side,this.#boardObj.getBoard()))
+        if(isSquareAttacked(kingPos,!side,this.#boardObj.getBoard()))
         {
             this.#gameState = winner;
         }

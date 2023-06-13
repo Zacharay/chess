@@ -1,3 +1,5 @@
+import { isSquareAttacked } from "../helpers.js"
+import MoveGenerator from "../MoveGenerator.js"
 //Piece Square tables
 const PawnTable = [
     0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
@@ -58,15 +60,38 @@ const PieceValues = {
     'King':0
 }
 
-export default function EvaluateFromSide(board,side)
+export default function EvaluateFromSide(boardObj)
 {
+    const board = boardObj.getBoard();
+    const side = boardObj.side;
+    const moveGen = new MoveGenerator(boardObj);
+    const moves = moveGen.getLegalMoves();
 
+    const kingPos = boardObj.getKingPos(side);
+
+    let score = 0;
+    if(moves.length==0)
+    {
+        
+        //draw
+        if(!isSquareAttacked(kingPos,!side,board))
+        {
+            return 0;
+        }
+        //black loses
+        if(side==0){
+            return -Infinity;
+        }
+        //white loses
+        else {
+            return Infinity;
+        }
+    }
 
     let whiteMaterial=0;
     let blackMaterial=0;
 
 
-    let score = 0;
     for(let i=0;i<board.length;i++)
     {
         if(board[i]=='')continue;

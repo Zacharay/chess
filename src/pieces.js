@@ -80,12 +80,13 @@ export class Knight extends Piece{
         this.type = 'Knight'
     }
 }
-export class Rock extends Piece{
-
+export class Rook extends Piece{
+    numOfMovesMade;
     constructor(white,pos) {
         super(white,pos,true,ROCK_DIR);
         this.symbol+='R';
         this.type = 'Rook'
+        this.numOfMovesMade=1;
     }
 }
 export class Bishop extends Piece{
@@ -142,7 +143,7 @@ export class King extends Piece{
             }
             return castlingMoves;
         }
-        const castlingMoves = checkCastlingMoves();
+        const castlingMoves = []//checkCastlingMoves();
         const normalMoves = super.generateMoves(board);
         if(!castlingMoves)return normalMoves;
 
